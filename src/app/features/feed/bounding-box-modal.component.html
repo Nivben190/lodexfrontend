@@ -1,0 +1,117 @@
+<div class="lx-modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="lx-modal">
+    <button class="lx-modal-close" (click)="close()" aria-label="סגור">✕</button>
+    <button
+      class="lx-modal-save"
+      [class.is-saved]="savedState()"
+      (click)="toggleSavePost($event)"
+      [attr.aria-label]="savedState() ? 'הסירי משמורים' : 'שמרי לוק'"
+    >{{ savedState() ? '★' : '☆' }}</button>
+
+    <div class="lx-modal-image-wrap">
+      <img [src]="post.imageUrl" [alt]="post.title" class="lx-modal-image" />
+
+      @if (scanning()) {
+        <div class="lx-scan-overlay">
+          <div class="lx-scan-line"></div>
+        </div>
+      }
+
+      @if (!selectedItem()) {
+        @if (!scanning()) {
+          @for (item of post.detectedItems; track item.id; let i = $index) {
+            <button
+              class="lx-box"
+              [class.is-owned]="isOwned(item)"
+              [style.left.%]="item.box.x"
+              [style.top.%]="item.box.y"
+              [style.width.%]="item.box.width"
+              [style.height.%]="item.box.height"
+              [style.animation-delay.ms]="i * 90"
+              (click)="selectItem(item)"
+            >
+              <span class="lx-box-tag">
+                {{ item.labelHe }}
+                @if (isOwned(item)) { <span class="lx-box-check">✓</span> }
+              </span>
+            </button>
+          }
+        }
+        <span class="lx-ai-badge" [class.is-scanning]="scanning()">{{ aiStatusLabel() }}</span>
+      }
+    </div>
+
+    @if (!selectedItem()) {
+      <div class="lx-modal-caption">
+        <h3 class="hebrew-serif">{{ post.title }}</h3>
+        <p>{{ post.photographer }} · {{ post.location }}</p>
+      </div>
+    }
+
+    @if (selectedItem(); as item) {
+      <div class="lx-item-panel">
+        <button class="lx-back-link" (click)="backToBoxes()">→ חזרה לתמונה</button>
+
+        @if (actionView() === null) {
+          <p class="lx-assistant-line">{{ assistantForItem() }}</p>
+          <h4 class="hebrew-serif">{{ item.labelHe }}</h4>
+          <p class="lx-item-sub">{{ item.category }}</p>
+
+          @if (isOwned(item)) {
+            <div class="lx-owned-banner">✓ הפריט הזה כבר בארון שלך</div>
+          } @else {
+            <div class="lx-actions">
+              <button class="lx-action lx-action-primary" (click)="markAsHave()">יש לי כזה</button>
+              <button class="lx-action" (click)="showSimilar()">דומה למה שיש לי</button>
+              <button class="lx-action" (click)="showAlternatives()">חיפוש חלופה</button>
+            </div>
+          }
+        }
+
+        @if (actionView() === 'similar') {
+          <h4 class="hebrew-serif">פריטים דומים בארון שלך</h4>
+          @if (similarItems().length > 0 || matchingItem()) {
+            <div class="lx-mini-grid">
+              @if (matchingItem(); as match) {
+                <div class="lx-mini-card">
+                  <img [src]="match.imageUrl" [alt]="match.name" />
+                  <span>{{ match.name }}</span>
+                </div>
+              }
+              @for (similar of similarItems(); track similar.id) {
+                <div class="lx-mini-card">
+                  <img [src]="similar.imageUrl" [alt]="similar.name" />
+                  <span>{{ similar.name }}</span>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="lx-empty-note">לא נמצאו פריטים דומים בארון כרגע.</p>
+          }
+        }
+
+        @if (actionView() === 'alternatives') {
+          <h4 class="hebrew-serif">חלופות לרכישה</h4>
+          @if (item.alternatives.length > 0) {
+            <div class="lx-mini-grid">
+              @for (alt of item.alternatives; track alt.id) {
+                <a class="lx-mini-card lx-mini-card-shop" [href]="alt.storeUrl">
+                  <img [src]="alt.imageUrl" [alt]="alt.name" />
+                  <span class="lx-alt-brand">{{ alt.brand }}</span>
+                  <span>{{ alt.name }}</span>
+                  <span class="lx-alt-price">₪{{ alt.price }}</span>
+                </a>
+              }
+            </div>
+          } @else {
+            <p class="lx-empty-note">אין כרגע חלופות זמינות לפריט זה.</p>
+          }
+        }
+      </div>
+    }
+
+    @if (toastMessage(); as msg) {
+      <div class="lx-toast">{{ msg }}</div>
+    }
+  </div>
+</div>

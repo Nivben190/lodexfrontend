@@ -1,0 +1,70 @@
+<section class="lx-closet">
+  <div class="lx-closet-head">
+    <h2 class="hebrew-serif">הארון שלי</h2>
+    <button class="lx-add-btn" (click)="showAddModal.set(true)">
+      <span>+</span> הוסף פריט
+    </button>
+  </div>
+
+  <div class="lx-filter-row lx-scroll-x">
+    @for (cat of categories; track cat) {
+      <button
+        class="lx-chip"
+        [class.is-active]="closetService.activeCategory() === cat"
+        (click)="setCategory(cat)"
+      >{{ cat }}</button>
+    }
+  </div>
+
+  <div class="lx-color-filter lx-scroll-x">
+    @for (color of colors; track color.name) {
+      <button
+        class="lx-swatch"
+        [class.is-active]="closetService.activeColor() === color.name"
+        [style.background]="color.hex"
+        [title]="color.name"
+        (click)="toggleColor(color.name)"
+      ></button>
+    }
+  </div>
+
+  <div class="lx-sort-row">
+    <span class="lx-count">{{ sortedItems().length }} פריטים</span>
+    <div class="lx-sort-toggle">
+      <button [class.is-active]="sortMode() === 'newest'" (click)="setSort('newest')">חדש</button>
+      <button [class.is-active]="sortMode() === 'name'" (click)="setSort('name')">שם</button>
+    </div>
+  </div>
+
+  @if (sortedItems().length > 0) {
+    <div class="lx-grid">
+      @for (item of sortedItems(); track item.id) {
+        <div class="lx-item-card">
+          <div class="lx-item-image-wrap">
+            <img [src]="item.imageUrl" [alt]="item.name" loading="lazy" />
+            @if (item.isFavorite) {
+              <span class="lx-fav">♥</span>
+            }
+          </div>
+          <div class="lx-item-info">
+            <span class="lx-item-name">{{ item.name }}</span>
+            <span class="lx-item-brand">{{ item.brand }}</span>
+            <div class="lx-item-tags">
+              <span class="lx-tag">{{ item.season }}</span>
+              <span class="lx-tag">{{ item.formality }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="lx-empty">
+      <span class="lx-empty-icon">👗</span>
+      <p>לא נמצאו פריטים בסינון הנוכחי</p>
+    </div>
+  }
+</section>
+
+@if (showAddModal()) {
+  <app-add-item-modal (closed)="showAddModal.set(false)" (added)="onItemAdded()"></app-add-item-modal>
+}

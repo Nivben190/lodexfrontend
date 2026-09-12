@@ -1,0 +1,283 @@
+.lx-suitcase {
+  padding: 4px 20px 20px;
+}
+
+.lx-suitcase > h2 {
+  margin: 0 0 16px;
+  font-size: 22px;
+  color: #1a1a1a;
+}
+
+.lx-scroll-x {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 20px;
+}
+
+.lx-trip-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: 190px;
+  height: 130px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  padding: 0;
+}
+
+.lx-trip-card.is-active {
+  border-color: #812d48;
+}
+
+.lx-trip-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lx-trip-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 12px;
+  background: linear-gradient(to top, rgba(26, 26, 26, 0.7), rgba(26, 26, 26, 0));
+  text-align: right;
+}
+
+.lx-trip-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.lx-trip-dates {
+  font-size: 11px;
+  color: #f0e9dc;
+}
+
+.lx-progress-card {
+  background: #fff;
+  border: 1px solid #efebe4;
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 22px;
+}
+
+.lx-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.lx-progress-title {
+  font-size: 15px;
+  color: #1a1a1a;
+}
+
+.lx-progress-pct {
+  font-size: 17px;
+  font-weight: 700;
+  color: #812d48;
+}
+
+.lx-progress-bar {
+  height: 8px;
+  background: #f9f8f6;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.lx-progress-fill {
+  height: 100%;
+  background: #812d48;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.lx-progress-sub {
+  font-size: 11.5px;
+  color: #767676;
+  line-height: 1.5;
+}
+
+.lx-event-group {
+  margin-bottom: 22px;
+}
+
+.lx-event-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.lx-event-icon {
+  font-size: 16px;
+}
+
+.lx-event-head h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #1a1a1a;
+  flex: 1;
+}
+
+.lx-event-count {
+  font-size: 11px;
+  color: #767676;
+}
+
+.lx-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lx-check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #efebe4;
+  border-radius: 14px;
+  padding: 8px 12px;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.lx-check-row.is-packed {
+  background: #f9f8f6;
+  opacity: 0.65;
+}
+
+.lx-check-row input {
+  display: none;
+}
+
+.lx-check-box {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  border: 1.5px solid #efebe4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #fff;
+  background: #fff;
+}
+
+.lx-check-row.is-packed .lx-check-box {
+  background: #812d48;
+  border-color: #812d48;
+}
+
+.lx-check-row img {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+
+.lx-check-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.lx-check-row.is-packed .lx-check-name {
+  text-decoration: line-through;
+  color: #767676;
+}
+
+.lx-add-look-btn {
+  width: 100%;
+  margin-top: 10px;
+  border: 1px dashed #d8c9ae;
+  background: #fdfbf7;
+  color: #812d48;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.lx-look-picker {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: fadeIn 0.2s ease;
+}
+
+.lx-look-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #efebe4;
+  border-radius: 14px;
+  padding: 8px;
+  text-align: right;
+}
+
+.lx-look-option img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+
+.lx-look-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lx-look-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.lx-look-owned {
+  font-size: 11px;
+  color: #767676;
+}
+
+.lx-empty-note {
+  font-size: 12.5px;
+  color: #767676;
+  line-height: 1.5;
+}
+
+.lx-toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  z-index: 50;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

@@ -1,0 +1,12 @@
+<nav class="lx-dock">
+  @for (tab of tabs; track tab.path) {
+    <a
+      class="lx-dock-item"
+      [routerLink]="tab.path"
+      routerLinkActive="is-active"
+    >
+      <span class="lx-dock-icon">{{ tab.icon }}</span>
+      <span class="lx-dock-label">{{ tab.label }}</span>
+    </a>
+  }
+</nav>

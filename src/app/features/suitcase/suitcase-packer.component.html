@@ -1,0 +1,85 @@
+<section class="lx-suitcase">
+  <h2 class="hebrew-serif">מזוודת חופשה</h2>
+
+  <div class="lx-trip-selector lx-scroll-x">
+    @for (trip of suitcaseService.suitcases(); track trip.id) {
+      <button
+        class="lx-trip-card"
+        [class.is-active]="suitcaseService.activeSuitcaseId() === trip.id"
+        (click)="selectTrip(trip.id)"
+      >
+        <img [src]="trip.coverImageUrl" [alt]="trip.tripName" />
+        <span class="lx-trip-overlay">
+          <span class="lx-trip-name">{{ trip.tripName }}</span>
+          <span class="lx-trip-dates">{{ formatDateRange(trip.startDate, trip.endDate) }}</span>
+        </span>
+      </button>
+    }
+  </div>
+
+  @if (suitcaseService.activeSuitcase(); as trip) {
+    <div class="lx-progress-card">
+      <div class="lx-progress-head">
+        <span class="hebrew-serif lx-progress-title">התקדמות אריזה</span>
+        <span class="lx-progress-pct">{{ trip.packedPercentage }}%</span>
+      </div>
+      <div class="lx-progress-bar">
+        <div class="lx-progress-fill" [style.width.%]="trip.packedPercentage"></div>
+      </div>
+      <span class="lx-progress-sub">{{ trip.packedItems }} מתוך {{ trip.totalItems }} פריטים ארוזים · {{ trip.expectedTempLow }}°–{{ trip.expectedTempHigh }}°C ב{{ trip.destination }}</span>
+    </div>
+
+    @for (group of trip.eventGroups; track group.eventKey) {
+      <div class="lx-event-group">
+        <div class="lx-event-head">
+          <span class="lx-event-icon">{{ group.icon }}</span>
+          <h3 class="hebrew-serif">{{ group.eventLabel }}</h3>
+          <span class="lx-event-count">{{ group.items.length }} פריטים</span>
+        </div>
+
+        <div class="lx-checklist">
+          @for (item of group.items; track item.id) {
+            <label class="lx-check-row" [class.is-packed]="item.isPacked">
+              <input
+                type="checkbox"
+                [checked]="item.isPacked"
+                (change)="togglePacked(trip.id, item)"
+              />
+              <span class="lx-check-box">
+                @if (item.isPacked) { ✓ }
+              </span>
+              <img [src]="item.imageUrl" [alt]="item.name" />
+              <span class="lx-check-name">{{ item.name }}</span>
+            </label>
+          }
+        </div>
+
+        <button class="lx-add-look-btn" (click)="openPicker(group.eventKey)">
+          ✨ הוסיפי פריטים מלוק שמור
+        </button>
+
+        @if (pickerOpenForGroup() === group.eventKey) {
+          <div class="lx-look-picker">
+            @if (feedService.savedPosts().length > 0) {
+              @for (post of feedService.savedPosts(); track post.id) {
+                <button class="lx-look-option" (click)="addLook(trip.id, post, group.eventKey)">
+                  <img [src]="post.imageUrl" [alt]="post.title" />
+                  <span class="lx-look-info">
+                    <span class="lx-look-name">{{ post.title }}</span>
+                    <span class="lx-look-owned">{{ countOwnedItems(post) }} פריטים מהארון שלך</span>
+                  </span>
+                </button>
+              }
+            } @else {
+              <p class="lx-empty-note">אין עדיין לוקים שמורים. שמרי לוק מגלריית ההשראות כדי להוסיף אותו לכאן.</p>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+
+  @if (toastMessage(); as msg) {
+    <div class="lx-toast">{{ msg }}</div>
+  }
+</section>
