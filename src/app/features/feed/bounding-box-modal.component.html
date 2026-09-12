@@ -89,17 +89,23 @@
                   <div class="lx-item-actions">
                     <button
                       type="button"
+                      class="lx-action-primary"
                       [class.is-active]="isInCloset(item)"
                       [disabled]="isInCloset(item) || addingId() === item.id"
                       (click)="addToCloset(item)"
                     >
                       <lx-icon [name]="isInCloset(item) ? 'check' : 'plus'" [size]="12"></lx-icon>
-                      לארון
+                      {{ isInCloset(item) ? 'בארון' : 'לארון' }}
                     </button>
 
-                    <button type="button" (click)="selectItem(item)">
+                    <button
+                      type="button"
+                      class="lx-action-icon"
+                      (click)="selectItem(item)"
+                      [attr.aria-label]="'פרטים על ' + item.labelHe"
+                      title="פרטים"
+                    >
                       <lx-icon name="search" [size]="12"></lx-icon>
-                      פרטים
                     </button>
                   </div>
                 </div>

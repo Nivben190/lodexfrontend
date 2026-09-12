@@ -200,28 +200,27 @@
 
 .lx-product {
   position: relative;
-  flex: 0 0 118px;
-  width: 118px;
-  height: 142px;
-  padding: 9px;
+  /* 118px (the mockup's width) cannot fit two Hebrew action labels without
+     clipping them, so the card is wider and sized by its content. */
+  flex: 0 0 142px;
+  width: 142px;
+  padding: 8px;
   border-radius: 14px;
   background: #eeeeee;
-  overflow: hidden;
 }
 
 .lx-product-card {
   display: flex;
   flex-direction: column;
-  height: 100%;
   width: 100%;
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .lx-product-visual {
   position: relative;
-  flex: 1;
-  min-height: 62px;
+  /* Square keeps every crop the same shape regardless of the box's aspect. */
+  aspect-ratio: 1;
   background: #e4e4e3;
   overflow: hidden;
 }
@@ -248,15 +247,14 @@
 .lx-product-info {
   display: flex;
   flex-direction: column;
-  min-height: 56px;
-  padding: 7px 8px;
+  padding: 8px 9px 9px;
   background: #f3f2f0;
 }
 
 .lx-product-name {
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.25;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -266,22 +264,40 @@
 .lx-item-actions {
   display: flex;
   gap: 5px;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .lx-item-actions button {
   display: flex;
-  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  min-height: 25px;
-  padding: 2px 7px;
+  gap: 4px;
+  height: 27px;
+  padding: 0 8px;
   border: 1px solid rgba(90, 84, 80, 0.22);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.58);
+  background: rgba(255, 255, 255, 0.7);
   color: #494542;
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+/* The labelled action takes the room; details is icon-only so nothing clips. */
+.lx-action-primary {
+  flex: 1;
+  min-width: 0;
+}
+
+.lx-action-icon {
+  flex: 0 0 27px;
+  padding: 0;
+}
+
+.lx-item-actions button:hover:not(:disabled) {
+  background: var(--color-white);
+  border-color: rgba(90, 84, 80, 0.4);
 }
 
 .lx-item-actions button.is-active {
