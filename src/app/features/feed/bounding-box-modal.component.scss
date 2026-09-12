@@ -233,6 +233,23 @@
   background-repeat: no-repeat;
 }
 
+/* Marks a tile showing a catalogue photograph rather than the garment in the
+   look, so nobody mistakes a lookalike for the thing she pointed at. */
+.lx-similar {
+  position: absolute;
+  bottom: 7px;
+  inset-inline-start: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #57514c;
+  pointer-events: none;
+}
+
 .lx-tile-add {
   position: absolute;
   top: 7px;

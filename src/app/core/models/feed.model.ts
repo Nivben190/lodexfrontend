@@ -29,6 +29,13 @@ export interface DetectedItem {
    */
   cutoutUrl: string | null;
 
+  /**
+   * A shop's photograph of the nearest thing in the catalogue. Preferred over the
+   * cutout when there is one: a garment worn in a street photo can be cut out but
+   * never turned into a product shot.
+   */
+  productUrl: string | null;
+
   /** Colour in the closet's vocabulary, e.g. "לבן". Null until a cutout exists. */
   colorName: string | null;
   colorHex: string | null;
