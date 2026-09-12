@@ -187,23 +187,18 @@
 /* ---- detected product rail ------------------------------------ */
 
 .lx-products {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding-bottom: 2px;
-}
-
-.lx-products::-webkit-scrollbar {
-  display: none;
+  /* A grid, not a rail: everything the AI found in a look should be visible at
+     once. A sideways scroll hides items behind a gesture nobody makes. */
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 10px;
 }
 
 .lx-product {
   position: relative;
   display: flex;
   flex-direction: column;
-  flex: 0 0 132px;
-  width: 132px;
+  min-width: 0;
 }
 
 /* A flat tile with the garment floated in it, the way a shop shows a product.
