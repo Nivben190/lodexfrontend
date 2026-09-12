@@ -7,15 +7,36 @@
 
     <h3 class="lx-sheet-title">הוסיפי פריט לארון</h3>
 
-    <button class="lx-upload" (click)="onMockUpload()" type="button">
-      @if (previewUrl(); as url) {
-        <img [src]="url" alt="תצוגה מקדימה" />
+    <!-- `capture` is deliberately absent so the picker offers camera *and* library. -->
+    <input
+      #fileInput
+      class="lx-visually-hidden"
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      (change)="onFileSelected($event)"
+    />
+
+    <button
+      class="lx-upload"
+      type="button"
+      [disabled]="uploading()"
+      (click)="fileInput.click()"
+    >
+      @if (uploading()) {
+        <span class="lx-upload-spinner" aria-hidden="true"></span>
+        <span>מעלה תמונה...</span>
+      } @else if (previewUrl()) {
+        <img [src]="previewUrl()!" alt="תצוגה מקדימה" />
         <span class="lx-upload-swap">החלפת תמונה</span>
       } @else {
         <lx-icon name="image-plus" [size]="26"></lx-icon>
-        <span>העלאת תמונה</span>
+        <span>העלאת תמונה מהמכשיר</span>
       }
     </button>
+
+    @if (uploadError(); as err) {
+      <p class="lx-upload-error">{{ err }}</p>
+    }
 
     <label class="lx-field">
       <span class="lx-field-label">שם הפריט</span>

@@ -40,6 +40,42 @@
   object-fit: cover;
 }
 
+.lx-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lx-upload:disabled {
+  cursor: wait;
+}
+
+.lx-upload-spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--color-line-strong);
+  border-top-color: var(--color-cherry);
+  animation: lx-spin 0.7s linear infinite;
+}
+
+@keyframes lx-spin {
+  to { transform: rotate(360deg); }
+}
+
+.lx-upload-error {
+  margin: -12px 0 16px;
+  font-size: 12.5px;
+  color: var(--color-danger);
+  text-align: right;
+}
+
 .lx-upload-swap {
   position: absolute;
   bottom: 10px;

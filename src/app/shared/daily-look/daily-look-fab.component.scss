@@ -1,13 +1,14 @@
 /* A fixed rail the same width as the app frame, so the button lands on the
-   frame's edge at any viewport width rather than floating outside it. */
+   frame's edge at any viewport width rather than floating outside it.
+   Sits just under the header, below the profile icon, as in the mockup. */
 .lx-daily-rail {
   position: fixed;
-  bottom: calc(var(--dock-clearance) + 8px);
+  top: calc(var(--header-height) + 10px);
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   max-width: 430px;
-  padding: 0 18px;
+  padding: 0 14px;
   display: flex;
   justify-content: flex-end;
   pointer-events: none;

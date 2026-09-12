@@ -35,6 +35,9 @@
 
   /* dock height + safe area, so scroll containers can clear the dock */
   --dock-clearance: 104px;
+
+  /* sticky header height, so the daily-look button can sit just below it */
+  --header-height: 64px;
 }
 
 * {
