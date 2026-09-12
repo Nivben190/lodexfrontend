@@ -81,7 +81,7 @@
       <div class="lx-grid">
         @for (item of visibleItems(); track item.id) {
           <article class="lx-item-card">
-            <div class="lx-item-image-wrap">
+            <div class="lx-item-image-wrap" [class.is-cutout]="item.imageIsCutout">
               <img [src]="item.imageUrl" [alt]="item.name" loading="lazy" />
 
               <button
@@ -102,7 +102,7 @@
             </div>
             <div class="lx-item-info">
               <span class="lx-item-name">{{ item.name }}</span>
-              <span class="lx-item-brand">{{ item.brand }}</span>
+              <span class="lx-item-brand">{{ item.brand || item.category }}</span>
             </div>
           </article>
         }

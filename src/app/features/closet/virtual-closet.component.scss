@@ -120,7 +120,9 @@
 
 .lx-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Three across, like a rail of hanging clothes: at two, a packshot floats in
+     more empty tile than garment. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -132,19 +134,26 @@
 
 .lx-item-image-wrap {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1;
   border-radius: 12px;
   overflow: hidden;
-  background: var(--color-sunk);
+  background: #efedea;
 }
 
-/* Closet images are photographs rather than cut-outs, so they fill the
-   tile; `contain` would letterbox them against the grey. */
+/* A photograph fills the tile; cropping it is the point. */
 .lx-item-image-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/* A cut-out is fitted instead, with room around it — cropping a packshot is
+   what makes it stop looking like one. */
+.lx-item-image-wrap.is-cutout img {
+  object-fit: contain;
+  padding: 9px;
+  box-sizing: border-box;
 }
 
 .lx-fav {
@@ -170,7 +179,10 @@
 }
 
 .lx-item-name {
-  font-size: 13px;
+  font-size: 12.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 500;
   color: var(--color-ink);
   line-height: 1.3;
@@ -179,6 +191,9 @@
 .lx-item-brand {
   font-size: 11px;
   color: var(--color-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lx-line-skeleton {

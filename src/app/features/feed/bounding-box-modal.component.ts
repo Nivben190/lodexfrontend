@@ -1,10 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ClosetService } from '../../core/services/closet.service';
 import { FeedService } from '../../core/services/feed.service';
 import { DetectedItem, FeedPost } from '../../core/models/feed.model';
 import { IconComponent } from '../../shared/icon/icon.component';
 
 const SCAN_DURATION_MS = 900;
+
+/** Instagram's embed bootstrapper. Loaded once, and only if a post needs it. */
+const INSTAGRAM_EMBED_SCRIPT = 'https://www.instagram.com/embed.js';
 
 /** Rough hex per closet colour name, used when adding a detected item. */
 const DEFAULT_COLOR = { name: 'אחר', hex: '#9A958D' };
@@ -19,6 +23,7 @@ const DEFAULT_COLOR = { name: 'אחר', hex: '#9A958D' };
 export class BoundingBoxModalComponent implements OnInit {
   private closetService = inject(ClosetService);
   private feedService = inject(FeedService);
+  private sanitizer = inject(DomSanitizer);
 
   @Input({ required: true }) post!: FeedPost;
   @Output() closed = new EventEmitter<void>();
@@ -29,6 +34,12 @@ export class BoundingBoxModalComponent implements OnInit {
   selectedItem = signal<DetectedItem | null>(null);
   toastMessage = signal<string | null>(null);
   addingId = signal<number | null>(null);
+
+  /**
+   * The embed is behind a tap rather than always on: it pulls a script and an
+   * iframe from Instagram, which is a lot to spend on every look someone opens.
+   */
+  embedVisible = signal(false);
 
   private addedIds = signal<Set<number>>(new Set());
 
@@ -42,6 +53,43 @@ export class BoundingBoxModalComponent implements OnInit {
     } else {
       this.scanning.set(false);
     }
+  }
+
+  /**
+   * The post's own markup, trusted deliberately: it is Instagram's oEmbed HTML,
+   * relayed by our API, and rewriting it would break the embed and step outside
+   * what the oEmbed licence allows. It is requested with omitscript, so there is
+   * no script tag in it — the loader below is what makes it render.
+   */
+  safeEmbed(): SafeHtml | null {
+    return this.post.embedHtml
+      ? this.sanitizer.bypassSecurityTrustHtml(this.post.embedHtml)
+      : null;
+  }
+
+  showEmbed() {
+    this.embedVisible.set(true);
+
+    // The blockquote has to exist before the script is asked to process it.
+    setTimeout(() => this.loadInstagramScript(), 0);
+  }
+
+  private loadInstagramScript() {
+    const instagram = (window as unknown as {
+      instgrm?: { Embeds?: { process(): void } };
+    }).instgrm;
+
+    if (instagram?.Embeds) {
+      instagram.Embeds.process();
+      return;
+    }
+
+    if (document.querySelector(`script[src="${INSTAGRAM_EMBED_SCRIPT}"]`)) return;
+
+    const script = document.createElement('script');
+    script.src = INSTAGRAM_EMBED_SCRIPT;
+    script.async = true;
+    document.body.appendChild(script);
   }
 
   confidencePercent(item: DetectedItem): number {
@@ -91,11 +139,14 @@ export class BoundingBoxModalComponent implements OnInit {
 
     this.closetService
       .addItem({
-        name: item.labelHe,
-        imageUrl: this.post.imageUrl,
+        name: item.displayName || item.labelHe,
+        // The cutout, so the closet fills with garments rather than with copies
+        // of the same street photo. Falls back to the look when there is none.
+        imageUrl: item.cutoutUrl ?? this.post.imageUrl,
+        imageIsCutout: item.cutoutUrl !== null,
         category: item.category,
-        color: DEFAULT_COLOR.name,
-        colorHex: DEFAULT_COLOR.hex,
+        color: item.colorName ?? DEFAULT_COLOR.name,
+        colorHex: item.colorHex ?? DEFAULT_COLOR.hex,
         season: 'כל השנה',
         brand: '',
         formality: 'יומיומי'
@@ -104,7 +155,7 @@ export class BoundingBoxModalComponent implements OnInit {
         next: () => {
           this.addedIds.update((ids) => new Set(ids).add(item.id));
           this.addingId.set(null);
-          this.showToast(`"${item.labelHe}" נוסף לארון ✓`);
+          this.showToast(`"${item.displayName || item.labelHe}" נוסף לארון ✓`);
         },
         error: () => {
           this.addingId.set(null);

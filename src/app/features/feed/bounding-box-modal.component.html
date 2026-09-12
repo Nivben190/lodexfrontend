@@ -69,53 +69,63 @@
       @if (!scanning() && post.detectedItems.length > 0) {
         <div class="lx-products" aria-label="הפריטים שזוהו בלוק">
           @for (item of post.detectedItems; track item.id) {
-            <div class="lx-product">
-              <div class="lx-product-card">
-                <div class="lx-product-visual">
-                  <!-- The crop is done in CSS from the detection box, so no
-                       server-side image processing is needed. -->
+            <article class="lx-product">
+              <button
+                type="button"
+                class="lx-product-tile"
+                (click)="selectItem(item)"
+                [attr.aria-label]="'פרטים על ' + item.displayName"
+              >
+                @if (item.cutoutUrl) {
+                  <!-- The garment on its own, cut out when the look was analysed. -->
+                  <!-- Not lazy: inside a modal's horizontal rail the loading
+                       trigger never fires, and a tile is only a few KB anyway. -->
+                  <img class="lx-cutout" [src]="item.cutoutUrl" [alt]="item.displayName" />
+                } @else {
+                  <!-- No usable mask for this one: crop the detection box in CSS. -->
                   <div
                     class="lx-sprite"
                     [style.background-image]="'url(' + post.imageUrl + ')'"
                     [style.background-size]="spriteSize(item)"
                     [style.background-position]="spritePosition(item)"
                   ></div>
-                  <span class="lx-confidence">{{ confidencePercent(item) }}%</span>
-                </div>
+                }
+              </button>
 
-                <div class="lx-product-info">
-                  <span class="lx-product-name" [title]="item.labelHe">{{ item.labelHe }}</span>
+              <button
+                type="button"
+                class="lx-tile-add"
+                [class.is-active]="isInCloset(item)"
+                [disabled]="isInCloset(item) || addingId() === item.id"
+                (click)="addToCloset(item)"
+                [attr.aria-label]="isInCloset(item) ? 'כבר בארון' : 'הוספה לארון'"
+              >
+                <lx-icon [name]="isInCloset(item) ? 'check' : 'plus'" [size]="13"></lx-icon>
+              </button>
 
-                  <div class="lx-item-actions">
-                    <button
-                      type="button"
-                      class="lx-action-primary"
-                      [class.is-active]="isInCloset(item)"
-                      [disabled]="isInCloset(item) || addingId() === item.id"
-                      (click)="addToCloset(item)"
-                    >
-                      <lx-icon [name]="isInCloset(item) ? 'check' : 'plus'" [size]="12"></lx-icon>
-                      {{ isInCloset(item) ? 'בארון' : 'לארון' }}
-                    </button>
-
-                    <button
-                      type="button"
-                      class="lx-action-icon"
-                      (click)="selectItem(item)"
-                      [attr.aria-label]="'פרטים על ' + item.labelHe"
-                      title="פרטים"
-                    >
-                      <lx-icon name="search" [size]="12"></lx-icon>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+              <span class="lx-product-name" [title]="item.displayName">{{ item.displayName }}</span>
+              <span class="lx-product-sub">{{ item.subtitle }}</span>
+            </article>
           }
         </div>
       }
 
-      <p class="lx-credit">{{ post.photographer }}@if (post.location) { · {{ post.location }} }</p>
+      @if (post.embedHtml) {
+        <div class="lx-source">
+          @if (embedVisible()) {
+            <!-- Instagram's own markup, rendered as it was returned: the post stays
+                 served by Instagram, with its creator, likes and link intact. -->
+            <div class="lx-embed" [innerHTML]="safeEmbed()"></div>
+          } @else {
+            <button type="button" class="lx-source-toggle" (click)="showEmbed()">
+              <lx-icon name="instagram" [size]="15"></lx-icon>
+              הפוסט המקורי באינסטגרם
+            </button>
+          }
+        </div>
+      } @else if (post.photographer) {
+        <p class="lx-credit">{{ post.photographer }}@if (post.location) { · {{ post.location }} }</p>
+      }
 
       @if (selectedItem(); as item) {
         <div class="lx-item-panel">

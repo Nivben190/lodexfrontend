@@ -2,6 +2,9 @@ export interface ClosetItem {
   id: number;
   name: string;
   imageUrl: string;
+
+  /** The image is a cut-out on transparency, so the tile fits it instead of filling. */
+  imageIsCutout: boolean;
   category: string;
   color: string;
   colorHex: string;
@@ -19,6 +22,7 @@ export interface CreateClosetItemRequest {
   isWishlist?: boolean;
   name: string;
   imageUrl: string;
+  imageIsCutout?: boolean;
   category: string;
   color: string;
   colorHex: string;

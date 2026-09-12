@@ -22,6 +22,23 @@ export interface DetectedItem {
   /** Detector confidence, 0–1. */
   score: number;
   box: BoundingBox;
+
+  /**
+   * The garment cut out of the photo on a transparent tile. Null when the mask
+   * was not good enough, and the view falls back to cropping the box.
+   */
+  cutoutUrl: string | null;
+
+  /** Colour in the closet's vocabulary, e.g. "לבן". Null until a cutout exists. */
+  colorName: string | null;
+  colorHex: string | null;
+
+  /** Garment and colour, agreeing in gender and number: "מכנסיים שחורים". */
+  displayName: string;
+
+  /** Closet category and garment type, for the caption under the tile. */
+  subtitle: string;
+
   ownedInCloset: boolean;
   matchingClosetItemId: number | null;
   similarClosetItemIds: number[];
@@ -38,6 +55,17 @@ export interface FeedPost {
   /** Attribution link, required by the image provider's terms. */
   photographerUrl: string;
   sourceUrl: string;
+
+  /**
+   * The source post's own embed markup, when the look came from one. Rendered as
+   * received so the post stays served by its platform, with the creator's name,
+   * likes and link intact.
+   */
+  embedHtml: string | null;
+
+  /** Where the look came from: "instagram", "pexels", "userupload", "seed". */
+  source: string;
+
   location: string;
   likes: number;
   aspectRatioWidth: number;
