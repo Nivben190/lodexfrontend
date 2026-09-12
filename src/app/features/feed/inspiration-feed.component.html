@@ -59,6 +59,13 @@
               {{ post.detectedItems.length }}
             </span>
           }
+
+          @if (post.source === 'instagram') {
+            <!-- Says where the look came from at a glance, before it is opened. -->
+            <span class="lx-from-instagram" title="מתוך פוסט באינסטגרם">
+              <lx-icon name="instagram" [size]="13"></lx-icon>
+            </span>
+          }
         </button>
       }
     </div>

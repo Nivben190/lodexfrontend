@@ -222,3 +222,22 @@
   font-size: 14px;
   padding: 10px 18px;
 }
+
+/* Where a look came from, marked on the tile itself. Bottom corner, opposite the
+   detected-items count, so the two badges never collide. */
+.lx-from-instagram {
+  position: absolute;
+  bottom: 8px;
+  inset-inline-start: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #3f3b38;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14);
+  pointer-events: none;
+}
