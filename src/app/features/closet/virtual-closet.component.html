@@ -25,16 +25,46 @@
   </div>
 
   @if (activeTab() === 'looks') {
-    <div class="lx-empty">
-      <span class="lx-empty-mark">
-        <lx-icon name="sparkles" [size]="22"></lx-icon>
-      </span>
-      <h4>עוד אין לוקים</h4>
-      <p>בונה הלוקים עדיין בדרך. בינתיים אפשר לשמור השראות ולהוסיף פריטים לארון.</p>
-      <button class="lx-empty-action" type="button" (click)="setTab('items')">
-        לפריטים שלי
-      </button>
-    </div>
+    @if (outfits().length > 0) {
+      <div class="lx-looks-grid">
+        <button class="lx-look-new" type="button" (click)="newLook()">
+          <lx-icon name="plus" [size]="20"></lx-icon>
+          לוק חדש
+        </button>
+
+        @for (outfit of outfits(); track outfit.id) {
+          <article class="lx-look-card" (click)="openLook(outfit)">
+            <div class="lx-look-preview" [style.background]="outfit.background">
+              @if (outfit.previewUrl) {
+                <!-- Not lazy: these are the first thing on the tab, and the
+                     loading trigger has a habit of never firing for them. -->
+                <img [src]="outfit.previewUrl" [alt]="outfit.name" />
+              }
+              <button
+                class="lx-look-remove"
+                type="button"
+                (click)="deleteLook($event, outfit)"
+                [attr.aria-label]="'מחיקת ' + outfit.name"
+              >
+                <lx-icon name="x" [size]="13"></lx-icon>
+              </button>
+            </div>
+            <span class="lx-look-name">{{ outfit.name }}</span>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="lx-empty">
+        <span class="lx-empty-mark">
+          <lx-icon name="sparkles" [size]="22"></lx-icon>
+        </span>
+        <h4>עוד אין לוקים</h4>
+        <p>הרכיבי לוק מהפריטים שבארון, שמרי אותו, והוא יחכה לך כאן.</p>
+        <button class="lx-empty-action" type="button" (click)="newLook()">
+          יצירת לוק
+        </button>
+      </div>
+    }
   } @else {
     <div class="lx-filter-row">
       <button

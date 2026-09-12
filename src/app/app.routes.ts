@@ -17,6 +17,16 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/closet/virtual-closet.component').then((m) => m.VirtualClosetComponent)
   },
+  {
+    path: 'outfit/new',
+    loadComponent: () =>
+      import('./features/outfit/outfit-builder.component').then((m) => m.OutfitBuilderComponent)
+  },
+  {
+    path: 'outfit/:id',
+    loadComponent: () =>
+      import('./features/outfit/outfit-builder.component').then((m) => m.OutfitBuilderComponent)
+  },
   // The suitcase packer is not part of the product's design; /suitcase is kept
   // as a redirect so any existing link still lands somewhere sensible.
   { path: 'suitcase', redirectTo: 'closet' },

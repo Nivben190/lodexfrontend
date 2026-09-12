@@ -1,0 +1,322 @@
+.lx-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 96px;
+}
+
+/* ---- header ------------------------------------------------------ */
+
+.lx-builder-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lx-head-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-ink);
+}
+
+.lx-save-head {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-white);
+}
+
+.lx-save-head:disabled {
+  opacity: 0.5;
+}
+
+.lx-name {
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-ink);
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.lx-name:focus {
+  outline: none;
+  border-color: var(--color-line);
+  background: var(--color-white);
+}
+
+/* ---- canvas ------------------------------------------------------ */
+
+.lx-canvas {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  touch-action: none;   /* dragging a layer must not scroll the page */
+  user-select: none;
+}
+
+.lx-layer {
+  position: absolute;
+  cursor: grab;
+}
+
+.lx-layer img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 7px rgba(0, 0, 0, 0.16));
+}
+
+.lx-layer-text {
+  display: block;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.lx-layer.is-selected::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border: 1.5px dashed rgba(90, 84, 80, 0.65);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.lx-canvas-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0 30px;
+  color: var(--color-muted);
+  font-size: 13px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.lx-watermark {
+  position: absolute;
+  bottom: 12px;
+  inset-inline-end: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(60, 55, 52, 0.45);
+  pointer-events: none;
+}
+
+/* ---- selected layer ---------------------------------------------- */
+
+.lx-layer-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  background: var(--color-white);
+}
+
+.lx-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
+  color: var(--color-muted);
+}
+
+.lx-control span {
+  flex: 0 0 44px;
+}
+
+.lx-control input[type='range'] {
+  flex: 1;
+  accent-color: var(--color-ink);
+}
+
+.lx-layer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lx-layer-actions button {
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--color-line);
+  border-radius: 9px;
+  background: var(--color-white);
+  color: var(--color-ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.lx-layer-actions .lx-danger {
+  color: #8c3a3a;
+  border-color: rgba(140, 58, 58, 0.3);
+}
+
+.lx-color {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 9px;
+  background: none;
+}
+
+/* ---- tabs and pickers -------------------------------------------- */
+
+.lx-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.lx-tabs .lx-quiet-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lx-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.lx-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: start;
+}
+
+.lx-pick-tile {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 11px;
+  background: #efedea;
+  overflow: hidden;
+}
+
+.lx-pick-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lx-pick-tile.is-cutout img {
+  object-fit: contain;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.lx-pick-name {
+  font-size: 10.5px;
+  color: var(--color-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lx-picker-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 0;
+  padding: 24px 0;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.lx-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lx-swatch {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+}
+
+.lx-swatch.is-active {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+.lx-text-add {
+  display: flex;
+  gap: 8px;
+}
+
+.lx-text-add input {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  background: var(--color-white);
+  font-size: 13px;
+}
+
+.lx-text-add button {
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  background: var(--color-white);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ---- save -------------------------------------------------------- */
+
+.lx-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 4px;
+}
+
+.lx-builder-toast {
+  position: fixed;
+  bottom: 92px;
+  inset-inline: 24px;
+  z-index: 40;
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: rgba(26, 26, 26, 0.92);
+  color: var(--color-white);
+  font-size: 13px;
+  text-align: center;
+}

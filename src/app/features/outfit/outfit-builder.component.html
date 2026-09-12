@@ -1,0 +1,176 @@
+<section class="lx-builder">
+  <header class="lx-builder-head">
+    <button class="lx-head-btn" type="button" (click)="back()" aria-label="חזרה">
+      <lx-icon name="arrow-right" [size]="18"></lx-icon>
+    </button>
+
+    <input
+      class="lx-name"
+      [value]="name()"
+      (input)="name.set($any($event.target).value)"
+      aria-label="שם הלוק"
+      maxlength="60"
+    />
+
+    <button class="lx-head-btn lx-save-head" type="button" (click)="save()" [disabled]="saving()">
+      <lx-icon name="check" [size]="18"></lx-icon>
+    </button>
+  </header>
+
+  <!-- The canvas. Tapping the ground clears the selection, the way a design tool does. -->
+  <div
+    #canvas
+    class="lx-canvas"
+    [style.background]="background()"
+    (pointerdown)="clearSelection()"
+  >
+    @for (layer of layers(); track layer.id) {
+      <div
+        class="lx-layer"
+        [class.is-selected]="selectedId() === layer.id"
+        [style.left.%]="layer.x"
+        [style.top.%]="layer.y"
+        [style.width.%]="layer.kind === 'item' ? layer.size : null"
+        [style.transform]="'translate(-50%, -50%) rotate(' + layer.rotation + 'deg)'"
+        (pointerdown)="startDrag($event, layer)"
+      >
+        @if (layer.kind === 'item') {
+          <img [src]="layer.imageUrl" [alt]="layer.label" draggable="false" />
+        } @else {
+          <span
+            class="lx-layer-text"
+            [style.color]="layer.color"
+            [style.font-size.px]="layer.size"
+          >{{ layer.text }}</span>
+        }
+      </div>
+    }
+
+    @if (layers().length === 0) {
+      <p class="lx-canvas-empty">הוסיפי פריטים מהארון כדי להתחיל</p>
+    }
+
+    <span class="lx-watermark">looxdex</span>
+  </div>
+
+  @if (selected(); as layer) {
+    <div class="lx-layer-controls">
+      <label class="lx-control">
+        <span>גודל</span>
+        <input
+          type="range"
+          min="10"
+          max="90"
+          [value]="layer.size"
+          (input)="onSize($any($event.target).value)"
+        />
+      </label>
+
+      <label class="lx-control">
+        <span>סיבוב</span>
+        <input
+          type="range"
+          min="-45"
+          max="45"
+          [value]="layer.rotation"
+          (input)="onRotation($any($event.target).value)"
+        />
+      </label>
+
+      <div class="lx-layer-actions">
+        @if (layer.kind === 'text') {
+          <input
+            class="lx-color"
+            type="color"
+            [value]="layer.color"
+            (input)="onTextColor($any($event.target).value)"
+            aria-label="צבע הטקסט"
+          />
+        }
+
+        <button type="button" (click)="bringForward()">הבאה לחזית</button>
+        <button type="button" class="lx-danger" (click)="removeSelected()">הסרה</button>
+      </div>
+    </div>
+  }
+
+  <div class="lx-tabs">
+    <button
+      class="lx-quiet-tab"
+      [class.is-active]="tab() === 'items'"
+      (click)="tab.set('items')"
+    >
+      <lx-icon name="shirt" [size]="15"></lx-icon>
+      פריטים
+    </button>
+    <button
+      class="lx-quiet-tab"
+      [class.is-active]="tab() === 'background'"
+      (click)="tab.set('background')"
+    >רקע</button>
+    <button
+      class="lx-quiet-tab"
+      [class.is-active]="tab() === 'text'"
+      (click)="tab.set('text')"
+    >טקסט</button>
+  </div>
+
+  @switch (tab()) {
+    @case ('items') {
+      @if (closetItems().length > 0) {
+        <div class="lx-picker">
+          @for (item of closetItems(); track item.id) {
+            <button class="lx-pick" type="button" (click)="addItem(item)" [title]="item.name">
+              <span class="lx-pick-tile" [class.is-cutout]="item.imageIsCutout">
+                <img [src]="item.imageUrl" [alt]="item.name" loading="lazy" />
+              </span>
+              <span class="lx-pick-name">{{ item.name }}</span>
+            </button>
+          }
+        </div>
+      } @else {
+        <p class="lx-picker-empty">
+          <lx-icon name="shirt" [size]="16"></lx-icon>
+          עדיין אין פריטים בארון
+        </p>
+      }
+    }
+
+    @case ('background') {
+      <div class="lx-swatches">
+        @for (color of backgrounds; track color) {
+          <button
+            class="lx-swatch"
+            type="button"
+            [class.is-active]="background() === color"
+            [style.background]="color"
+            (click)="background.set(color)"
+            [attr.aria-label]="'רקע ' + color"
+          ></button>
+        }
+      </div>
+    }
+
+    @case ('text') {
+      <div class="lx-text-add">
+        <input
+          [value]="draft()"
+          (input)="draft.set($any($event.target).value)"
+          (keydown.enter)="addText()"
+          placeholder="מה כתוב על הלוק?"
+          maxlength="40"
+        />
+        <button type="button" (click)="addText()">הוספה</button>
+      </div>
+    }
+  }
+
+  <button class="lx-primary-btn lx-save" type="button" (click)="save()" [disabled]="saving()">
+    <lx-icon name="check" [size]="15"></lx-icon>
+    {{ saving() ? 'שומרת...' : 'שמירת הלוק' }}
+  </button>
+
+  @if (toast(); as message) {
+    <div class="lx-builder-toast">{{ message }}</div>
+  }
+</section>

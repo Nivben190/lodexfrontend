@@ -1,5 +1,8 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ClosetService } from '../../core/services/closet.service';
+import { OutfitService } from '../../core/services/outfit.service';
+import { Outfit } from '../../core/models/outfit.model';
 import { CLOSET_CATEGORIES, CLOSET_COLORS, ClosetItem } from '../../core/models/closet.model';
 import { AddItemModalComponent } from './add-item-modal.component';
 import { IconComponent } from '../../shared/icon/icon.component';
@@ -16,6 +19,9 @@ type ClosetTab = 'items' | 'looks' | 'wishlist';
 })
 export class VirtualClosetComponent implements OnInit {
   closetService = inject(ClosetService);
+  outfitService = inject(OutfitService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   categories = CLOSET_CATEGORIES;
   colors = CLOSET_COLORS;
@@ -52,7 +58,31 @@ export class VirtualClosetComponent implements OnInit {
     return items.sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime());
   });
 
+  /** Looks the wearer has built, newest first. */
+  outfits = computed(() => this.outfitService.outfits());
+
+  newLook() {
+    this.router.navigate(['/outfit/new']);
+  }
+
+  openLook(outfit: Outfit) {
+    this.router.navigate(['/outfit', outfit.id]);
+  }
+
+  deleteLook(event: Event, outfit: Outfit) {
+    event.stopPropagation();
+    this.outfitService.remove(outfit.id).subscribe();
+  }
+
   ngOnInit() {
+    this.outfitService.load().subscribe();
+
+    // Saving a look returns here with ?tab=looks, so it lands on what it just made.
+    const tab = this.route.snapshot.queryParamMap.get('tab');
+    if (tab === 'looks' || tab === 'wishlist' || tab === 'items') {
+      this.activeTab.set(tab as ClosetTab);
+    }
+
     this.closetService.loadCloset().subscribe();
     this.closetService.loadWishlist().subscribe();
   }
