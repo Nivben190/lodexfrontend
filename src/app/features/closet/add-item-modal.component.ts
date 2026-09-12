@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ClosetService } from '../../core/services/closet.service';
 import {
@@ -25,6 +25,9 @@ const PLACEHOLDER_PREVIEWS = [
 })
 export class AddItemModalComponent {
   private closetService = inject(ClosetService);
+
+  /** Add straight into the wishlist when opened from that tab. */
+  @Input() wishlist = false;
 
   @Output() closed = new EventEmitter<void>();
   @Output() added = new EventEmitter<void>();
@@ -73,7 +76,7 @@ export class AddItemModalComponent {
     if (!this.form.name.trim()) return;
 
     this.saving.set(true);
-    this.closetService.addItem(this.form).subscribe({
+    this.closetService.addItem({ ...this.form, isWishlist: this.wishlist }).subscribe({
       next: () => {
         this.saving.set(false);
         this.added.emit();

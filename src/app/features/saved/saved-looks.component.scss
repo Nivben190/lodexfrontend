@@ -1,0 +1,197 @@
+.lx-saved {
+  padding: 14px 10px 20px;
+  text-align: right;
+}
+
+.lx-saved h2 {
+  margin: 0 4px 12px;
+  font-size: 19px;
+}
+
+/* ---- folder chips ------------------------------------------- */
+
+.lx-folders {
+  gap: 18px;
+  align-items: center;
+  margin: 0 4px 14px;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.lx-folders .lx-quiet-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+
+.lx-folder-count {
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--color-muted);
+  background: var(--color-soft);
+  border-radius: var(--radius-pill);
+  padding: 1px 6px;
+}
+
+/* ---- masonry ------------------------------------------------- */
+
+.lx-masonry {
+  columns: 2;
+  column-gap: 6px;
+}
+
+.lx-tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0 0 6px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-soft);
+  break-inside: avoid;
+  transition: transform 0.14s ease;
+}
+
+.lx-tile:active {
+  transform: scale(0.985);
+}
+
+.lx-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lx-tile-action {
+  position: absolute;
+  top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  z-index: 2;
+  transition: transform 0.14s ease;
+}
+
+.lx-tile-action:active {
+  transform: scale(0.86);
+}
+
+.lx-unsave {
+  inset-inline-start: 8px;
+  color: var(--color-cherry);
+}
+
+.lx-file {
+  inset-inline-end: 8px;
+  color: var(--color-ink);
+}
+
+.lx-sentinel {
+  height: 1px;
+  width: 100%;
+}
+
+.lx-more-note {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--color-muted);
+  padding: 14px 0 2px;
+}
+
+/* ---- filing sheet --------------------------------------------- */
+
+.lx-sheet-title {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.lx-sheet-sub {
+  margin: 0 0 16px;
+  font-size: 12.5px;
+  color: var(--color-muted);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lx-folder-list {
+  display: grid;
+}
+
+.lx-folder-choice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--color-line);
+  background: transparent;
+  color: var(--color-ink);
+  font-size: 14.5px;
+  text-align: right;
+}
+
+.lx-folder-choice:last-child {
+  border-bottom: 0;
+}
+
+.lx-folder-clear {
+  color: var(--color-muted);
+}
+
+/* ---- empty ----------------------------------------------------- */
+
+.lx-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 56px 24px 24px;
+}
+
+.lx-empty-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--color-soft);
+  color: var(--color-cherry);
+  margin-bottom: 14px;
+}
+
+.lx-empty h4 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.lx-empty p {
+  margin: 0 0 18px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+.lx-empty-action {
+  background: var(--color-cherry);
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 18px;
+}

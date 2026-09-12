@@ -3,7 +3,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, of, tap } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { FeedPage, FeedPost } from '../models/feed.model';
+import { FeedPage, FeedPost, SavedFolder } from '../models/feed.model';
 
 export type FeedViewMode = 'all' | 'saved';
 
@@ -23,6 +23,12 @@ export class FeedService {
 
   searchQuery = signal('');
   viewMode = signal<FeedViewMode>('all');
+
+  /** Folder filter for the saved view; null is "הכל". */
+  activeFolder = signal<string | null>(null);
+
+  /** Folders in use, with counts, from the API. */
+  folders = signal<SavedFolder[]>([]);
 
   hasMore = computed(() => this.nextCursor() !== null);
 
@@ -120,8 +126,30 @@ export class FeedService {
     const query = this.searchQuery().trim();
     if (query) params = params.set('q', query);
 
-    if (this.viewMode() === 'saved') params = params.set('saved', 'true');
+    if (this.viewMode() === 'saved') {
+      params = params.set('saved', 'true');
+
+      const folder = this.activeFolder();
+      if (folder) params = params.set('folder', folder);
+    }
 
     return params;
+  }
+
+  loadFolders() {
+    return this.http.get<SavedFolder[]>(`${this.baseUrl}/folders`).pipe(
+      tap((folders) => this.folders.set(folders)),
+      catchError(() => {
+        this.folders.set([]);
+        return of([] as SavedFolder[]);
+      })
+    );
+  }
+
+  /** Files a saved look under a folder; null clears it. */
+  setFolder(postId: number, folder: string | null) {
+    return this.http.patch<void>(`${this.baseUrl}/${postId}/folder`, { folder }).pipe(
+      tap(() => this.loadFolders().subscribe())
+    );
   }
 }

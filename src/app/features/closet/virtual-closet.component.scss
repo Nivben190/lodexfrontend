@@ -23,6 +23,34 @@
 
 /* ---- filter row -------------------------------------------- */
 
+.lx-tabs {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.lx-item-move {
+  position: absolute;
+  top: 8px;
+  inset-inline-start: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-ink);
+  transition: transform 0.14s ease;
+}
+
+.lx-item-move:active {
+  transform: scale(0.86);
+}
+
 .lx-filter-row {
   display: flex;
   align-items: center;

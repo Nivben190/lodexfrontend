@@ -55,3 +55,12 @@ export interface FeedPage {
   hasMore: boolean;
   totalCount: number;
 }
+
+/** A folder saved looks can be filed under, with its current size. */
+export interface SavedFolder {
+  name: string;
+  count: number;
+}
+
+/** Folder names offered by default, matching the mockup. */
+export const SAVED_FOLDERS = ['פריז', 'עבודה', 'ערב', 'קיץ'] as const;

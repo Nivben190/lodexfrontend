@@ -22,19 +22,6 @@
     }
   </div>
 
-  <div class="lx-tabs">
-    <button
-      class="lx-quiet-tab"
-      [class.is-active]="feedService.viewMode() === 'all'"
-      (click)="setViewMode('all')"
-    >הכל</button>
-    <button
-      class="lx-quiet-tab"
-      [class.is-active]="feedService.viewMode() === 'saved'"
-      (click)="setViewMode('saved')"
-    >שמורים</button>
-  </div>
-
   @if (loading()) {
     <div class="lx-masonry" aria-hidden="true">
       @for (h of skeletonHeights; track $index) {
@@ -100,21 +87,13 @@
   } @else {
     <div class="lx-empty">
       <span class="lx-empty-mark">
-        <lx-icon [name]="feedService.viewMode() === 'saved' ? 'heart' : 'search'" [size]="22"></lx-icon>
+        <lx-icon name="search" [size]="22"></lx-icon>
       </span>
-      @if (feedService.viewMode() === 'saved') {
-        <h4>עוד לא שמרת לוקים</h4>
-        <p>לחצי על הלב שעל התמונה כדי לשמור אותה לכאן.</p>
-        <button class="lx-empty-action" type="button" (click)="setViewMode('all')">
-          לגלריית ההשראות
-        </button>
-      } @else {
-        <h4>לא נמצאו תוצאות</h4>
-        <p>לא מצאנו השראות עבור "{{ feedService.searchQuery() }}".</p>
-        <button class="lx-empty-action" type="button" (click)="clearSearch()">
-          נקי את החיפוש
-        </button>
-      }
+      <h4>לא נמצאו תוצאות</h4>
+      <p>לא מצאנו השראות עבור "{{ feedService.searchQuery() }}".</p>
+      <button class="lx-empty-action" type="button" (click)="clearSearch()">
+        נקי את החיפוש
+      </button>
     </div>
   }
 </section>

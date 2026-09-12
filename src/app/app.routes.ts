@@ -8,14 +8,17 @@ export const routes: Routes = [
       import('./features/feed/inspiration-feed.component').then((m) => m.InspirationFeedComponent)
   },
   {
+    path: 'saved',
+    loadComponent: () =>
+      import('./features/saved/saved-looks.component').then((m) => m.SavedLooksComponent)
+  },
+  {
     path: 'closet',
     loadComponent: () =>
       import('./features/closet/virtual-closet.component').then((m) => m.VirtualClosetComponent)
   },
-  {
-    path: 'suitcase',
-    loadComponent: () =>
-      import('./features/suitcase/suitcase-packer.component').then((m) => m.SuitcasePackerComponent)
-  },
+  // The suitcase packer is not part of the product's design; /suitcase is kept
+  // as a redirect so any existing link still lands somewhere sensible.
+  { path: 'suitcase', redirectTo: 'closet' },
   { path: '**', redirectTo: 'feed' }
 ];

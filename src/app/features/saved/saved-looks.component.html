@@ -1,0 +1,130 @@
+<section class="lx-saved">
+  <h2 class="lx-title">ההשראות ששמרת</h2>
+
+  <div class="lx-folders lx-scroll-x" aria-label="תיקיות">
+    <button
+      class="lx-quiet-tab"
+      [class.is-active]="activeFolder() === null"
+      (click)="setFolder(null)"
+    >הכל</button>
+
+    @for (folder of folderNames; track folder) {
+      <button
+        class="lx-quiet-tab"
+        [class.is-active]="activeFolder() === folder"
+        (click)="setFolder(folder)"
+      >
+        {{ folder }}
+        @if (countFor(folder) > 0) {
+          <span class="lx-folder-count">{{ countFor(folder) }}</span>
+        }
+      </button>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="lx-masonry" aria-hidden="true">
+      @for (h of skeletonHeights; track $index) {
+        <div class="lx-tile lx-skeleton" [style.height.px]="h"></div>
+      }
+    </div>
+  } @else if (feedService.visiblePosts().length > 0) {
+    <div class="lx-masonry">
+      @for (post of feedService.visiblePosts(); track post.id) {
+        <button
+          class="lx-tile"
+          type="button"
+          (click)="openPost(post)"
+          [attr.aria-label]="'פתיחת ' + post.title"
+          [style.aspect-ratio]="post.aspectRatioWidth + ' / ' + post.aspectRatioHeight"
+        >
+          <img [src]="post.thumbnailUrl || post.imageUrl" [alt]="post.title" loading="lazy" />
+
+          <span
+            class="lx-tile-action lx-unsave"
+            role="button"
+            tabindex="0"
+            (click)="unsave($event, post)"
+            (keydown.enter)="unsave($event, post)"
+            aria-label="הסירי משמורים"
+          >
+            <lx-icon name="heart-filled" [size]="15"></lx-icon>
+          </span>
+
+          <span
+            class="lx-tile-action lx-file"
+            role="button"
+            tabindex="0"
+            (click)="openFiling($event, post)"
+            (keydown.enter)="openFiling($event, post)"
+            aria-label="שיוך לתיקייה"
+          >
+            <lx-icon name="bookmark" [size]="14"></lx-icon>
+          </span>
+        </button>
+      }
+    </div>
+
+    <div #sentinel class="lx-sentinel" aria-hidden="true"></div>
+
+    @if (loadingMore()) {
+      <p class="lx-more-note">טוענת עוד...</p>
+    }
+  } @else if (feedService.loadFailed()) {
+    <div class="lx-empty">
+      <span class="lx-empty-mark">
+        <lx-icon name="bookmark" [size]="22"></lx-icon>
+      </span>
+      <h4>לא הצלחנו לטעון את השמורים</h4>
+      <p>ייתכן שהשרת מתעורר משינה. נסי שוב בעוד רגע.</p>
+      <button class="lx-empty-action" type="button" (click)="retry()">נסי שוב</button>
+    </div>
+  } @else {
+    <div class="lx-empty">
+      <span class="lx-empty-mark">
+        <lx-icon name="bookmark" [size]="22"></lx-icon>
+      </span>
+      @if (activeFolder()) {
+        <h4>אין עדיין השראות ב"{{ activeFolder() }}"</h4>
+        <p>אפשר לשייך לוק שמור לתיקייה דרך הסימנייה שעל התמונה.</p>
+        <button class="lx-empty-action" type="button" (click)="setFolder(null)">
+          הצגת כל השמורים
+        </button>
+      } @else {
+        <h4>עדיין לא שמרת השראות</h4>
+        <p>השראות שתשמרי יופיעו כאן.</p>
+      }
+    </div>
+  }
+</section>
+
+@if (filingPost(); as post) {
+  <div class="lx-sheet-backdrop" (click)="onFilingBackdrop($event)">
+    <div class="lx-sheet" role="dialog" aria-label="שיוך לתיקייה">
+      <span class="lx-sheet-handle"></span>
+      <button class="lx-sheet-close" type="button" (click)="closeFiling()" aria-label="סגירה">
+        <lx-icon name="x" [size]="17"></lx-icon>
+      </button>
+
+      <h3 class="lx-sheet-title">שיוך לתיקייה</h3>
+      <p class="lx-sheet-sub">{{ post.title }}</p>
+
+      <div class="lx-folder-list">
+        @for (folder of folderNames; track folder) {
+          <button class="lx-folder-choice" type="button" (click)="fileInto(folder)">
+            <lx-icon name="bookmark" [size]="15"></lx-icon>
+            {{ folder }}
+          </button>
+        }
+        <button class="lx-folder-choice lx-folder-clear" type="button" (click)="fileInto(null)">
+          <lx-icon name="x" [size]="15"></lx-icon>
+          ללא תיקייה
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (selectedPost(); as post) {
+  <app-bounding-box-modal [post]="post" (closed)="closeModal()"></app-bounding-box-modal>
+}

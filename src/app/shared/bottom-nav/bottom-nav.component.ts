@@ -16,8 +16,9 @@ interface NavTab {
   styleUrl: './bottom-nav.component.scss'
 })
 export class BottomNavComponent {
+  // Order mirrors the mockup's dock: saved, search, wardrobe.
   tabs: NavTab[] = [
-    { path: '/suitcase', label: 'מזוודה', icon: 'luggage' },
+    { path: '/saved', label: 'ההשראות ששמרת', icon: 'bookmark' },
     { path: '/feed', label: 'השראות', icon: 'search' },
     { path: '/closet', label: 'הארון שלי', icon: 'shirt' }
   ];

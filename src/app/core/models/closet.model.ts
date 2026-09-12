@@ -9,10 +9,14 @@ export interface ClosetItem {
   brand: string;
   formality: string;
   isFavorite: boolean;
+  /** Wanted rather than owned; drives the wardrobe's wishlist tab. */
+  isWishlist: boolean;
   addedAt: string;
 }
 
 export interface CreateClosetItemRequest {
+  /** Create straight into the wishlist rather than the closet. */
+  isWishlist?: boolean;
   name: string;
   imageUrl: string;
   category: string;
@@ -23,7 +27,16 @@ export interface CreateClosetItemRequest {
   formality: string;
 }
 
-export const CLOSET_CATEGORIES = ['הכל', 'חולצות', 'מכנסיים', 'שמלות', 'נעליים', 'תיקים'] as const;
+export const CLOSET_CATEGORIES = [
+  'הכל',
+  'חולצות',
+  'מכנסיים',
+  'ז׳קטים',
+  'שמלות',
+  'נעליים',
+  'תיקים',
+  'אביזרים'
+] as const;
 
 export const CLOSET_COLORS: { name: string; hex: string }[] = [
   { name: 'לבן', hex: '#F7F5F0' },
