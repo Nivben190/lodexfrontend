@@ -1,92 +1,93 @@
-<div class="lx-modal-backdrop" (click)="onBackdropClick($event)">
-  <div class="lx-sheet">
-    <span class="lx-handle"></span>
-    <div class="lx-sheet-head">
-      <h3 class="hebrew-serif">הוסיפי פריט לארון</h3>
-      <button class="lx-close" (click)="close()" aria-label="סגור">✕</button>
-    </div>
+<div class="lx-sheet-backdrop" (click)="onBackdropClick($event)">
+  <div class="lx-sheet" role="dialog" aria-label="הוספת פריט לארון">
+    <span class="lx-sheet-handle"></span>
+    <button class="lx-sheet-close" type="button" (click)="close()" aria-label="סגור">
+      <lx-icon name="x" [size]="17"></lx-icon>
+    </button>
 
-    <div class="lx-sheet-body">
-      <button class="lx-upload" (click)="onMockUpload()" type="button">
-        @if (previewUrl(); as url) {
-          <img [src]="url" alt="תצוגה מקדימה" />
-        } @else {
-          <span class="lx-upload-icon">📷</span>
-          <span>העלאת תמונה</span>
+    <h3 class="lx-sheet-title">הוסיפי פריט לארון</h3>
+
+    <button class="lx-upload" (click)="onMockUpload()" type="button">
+      @if (previewUrl(); as url) {
+        <img [src]="url" alt="תצוגה מקדימה" />
+        <span class="lx-upload-swap">החלפת תמונה</span>
+      } @else {
+        <lx-icon name="image-plus" [size]="26"></lx-icon>
+        <span>העלאת תמונה</span>
+      }
+    </button>
+
+    <label class="lx-field">
+      <span class="lx-field-label">שם הפריט</span>
+      <input type="text" [(ngModel)]="form.name" placeholder="למשל: חולצת פשתן לבנה" />
+    </label>
+
+    <label class="lx-field">
+      <span class="lx-field-label">מותג</span>
+      <input type="text" [(ngModel)]="form.brand" placeholder="למשל: Zara" />
+    </label>
+
+    <div class="lx-field">
+      <span class="lx-field-label">קטגוריה</span>
+      <div class="lx-chip-row lx-scroll-x">
+        @for (cat of categories; track cat) {
+          <button
+            type="button"
+            class="lx-chip"
+            [class.is-active]="form.category === cat"
+            (click)="form.category = cat"
+          >{{ cat }}</button>
         }
-      </button>
-
-      <label class="lx-field">
-        <span>שם הפריט</span>
-        <input type="text" [(ngModel)]="form.name" placeholder='למשל: חולצת פשתן לבנה' />
-      </label>
-
-      <label class="lx-field">
-        <span>מותג</span>
-        <input type="text" [(ngModel)]="form.brand" placeholder="למשל: Zara" />
-      </label>
-
-      <div class="lx-field">
-        <span>קטגוריה</span>
-        <div class="lx-chip-row">
-          @for (cat of categories; track cat) {
-            <button
-              type="button"
-              class="lx-chip"
-              [class.is-active]="form.category === cat"
-              (click)="form.category = cat"
-            >{{ cat }}</button>
-          }
-        </div>
       </div>
-
-      <div class="lx-field">
-        <span>צבע</span>
-        <div class="lx-color-row">
-          @for (color of colors; track color.name) {
-            <button
-              type="button"
-              class="lx-swatch"
-              [class.is-active]="form.color === color.name"
-              [style.background]="color.hex"
-              [title]="color.name"
-              (click)="selectColor(color)"
-            ></button>
-          }
-        </div>
-      </div>
-
-      <div class="lx-field">
-        <span>עונה</span>
-        <div class="lx-chip-row">
-          @for (season of seasons; track season) {
-            <button
-              type="button"
-              class="lx-chip"
-              [class.is-active]="form.season === season"
-              (click)="form.season = season"
-            >{{ season }}</button>
-          }
-        </div>
-      </div>
-
-      <div class="lx-field">
-        <span>רמת פורמליות</span>
-        <div class="lx-chip-row">
-          @for (level of formalityOptions; track level) {
-            <button
-              type="button"
-              class="lx-chip"
-              [class.is-active]="form.formality === level"
-              (click)="form.formality = level"
-            >{{ level }}</button>
-          }
-        </div>
-      </div>
-
-      <button class="lx-submit" [disabled]="!form.name.trim() || saving()" (click)="submit()">
-        {{ saving() ? 'שומר...' : 'הוסיפי לארון' }}
-      </button>
     </div>
+
+    <div class="lx-field">
+      <span class="lx-field-label">צבע</span>
+      <div class="lx-color-row">
+        @for (color of colors; track color.name) {
+          <button
+            type="button"
+            class="lx-swatch"
+            [class.is-active]="form.color === color.name"
+            [style.background]="color.hex"
+            [title]="color.name"
+            [attr.aria-label]="color.name"
+            (click)="selectColor(color)"
+          ></button>
+        }
+      </div>
+    </div>
+
+    <div class="lx-field">
+      <span class="lx-field-label">עונה</span>
+      <div class="lx-chip-row lx-scroll-x">
+        @for (season of seasons; track season) {
+          <button
+            type="button"
+            class="lx-chip"
+            [class.is-active]="form.season === season"
+            (click)="form.season = season"
+          >{{ season }}</button>
+        }
+      </div>
+    </div>
+
+    <div class="lx-field">
+      <span class="lx-field-label">רמת פורמליות</span>
+      <div class="lx-chip-row lx-scroll-x">
+        @for (level of formalityOptions; track level) {
+          <button
+            type="button"
+            class="lx-chip"
+            [class.is-active]="form.formality === level"
+            (click)="form.formality = level"
+          >{{ level }}</button>
+        }
+      </div>
+    </div>
+
+    <button class="lx-primary-btn" [disabled]="!form.name.trim() || saving()" (click)="submit()">
+      {{ saving() ? 'שומרת...' : 'הוסיפי לארון' }}
+    </button>
   </div>
 </div>

@@ -1,12 +1,16 @@
 <div class="lx-modal-backdrop" (click)="onBackdropClick($event)">
   <div class="lx-modal">
-    <button class="lx-modal-close" (click)="close()" aria-label="סגור">✕</button>
+    <button class="lx-modal-close" (click)="close()" aria-label="סגור">
+      <lx-icon name="x" [size]="17"></lx-icon>
+    </button>
     <button
       class="lx-modal-save"
       [class.is-saved]="savedState()"
       (click)="toggleSavePost($event)"
       [attr.aria-label]="savedState() ? 'הסירי משמורים' : 'שמרי לוק'"
-    >{{ savedState() ? '★' : '☆' }}</button>
+    >
+      <lx-icon [name]="savedState() ? 'heart-filled' : 'heart'" [size]="17"></lx-icon>
+    </button>
 
     <div class="lx-modal-image-wrap">
       <img [src]="post.imageUrl" [alt]="post.title" class="lx-modal-image" />
@@ -32,12 +36,17 @@
             >
               <span class="lx-box-tag">
                 {{ item.labelHe }}
-                @if (isOwned(item)) { <span class="lx-box-check">✓</span> }
+                @if (isOwned(item)) {
+                  <lx-icon name="check" [size]="11"></lx-icon>
+                }
               </span>
             </button>
           }
         }
-        <span class="lx-ai-badge" [class.is-scanning]="scanning()">{{ aiStatusLabel() }}</span>
+        <span class="lx-ai-badge" [class.is-scanning]="scanning()">
+          <lx-icon name="scan-search" [size]="13"></lx-icon>
+          {{ aiStatusLabel() }}
+        </span>
       }
     </div>
 
@@ -50,7 +59,10 @@
 
     @if (selectedItem(); as item) {
       <div class="lx-item-panel">
-        <button class="lx-back-link" (click)="backToBoxes()">→ חזרה לתמונה</button>
+        <button class="lx-back-link" (click)="backToBoxes()">
+          <lx-icon name="arrow-right" [size]="15"></lx-icon>
+          חזרה לתמונה
+        </button>
 
         @if (actionView() === null) {
           <p class="lx-assistant-line">{{ assistantForItem() }}</p>
@@ -58,7 +70,10 @@
           <p class="lx-item-sub">{{ item.category }}</p>
 
           @if (isOwned(item)) {
-            <div class="lx-owned-banner">✓ הפריט הזה כבר בארון שלך</div>
+            <div class="lx-owned-banner">
+              <lx-icon name="check" [size]="16"></lx-icon>
+              הפריט הזה כבר בארון שלך
+            </div>
           } @else {
             <div class="lx-actions">
               <button class="lx-action lx-action-primary" (click)="markAsHave()">יש לי כזה</button>

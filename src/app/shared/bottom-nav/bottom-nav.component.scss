@@ -1,44 +1,51 @@
 .lx-dock {
   position: fixed;
-  bottom: 18px;
+  bottom: calc(18px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 40px);
-  max-width: 390px;
   display: flex;
-  justify-content: space-around;
-  background: #ffffff;
-  border: 1px solid #efebe4;
-  border-radius: 22px;
-  padding: 10px 6px;
-  box-shadow: 0 12px 30px -10px rgba(26, 26, 26, 0.18);
+  gap: 12px;
+  justify-content: center;
   z-index: 40;
+  pointer-events: none;
 }
 
 .lx-dock-item {
+  position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 3px;
-  flex: 1;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  box-shadow: var(--shadow-dock);
+  color: var(--color-ink);
   text-decoration: none;
-  color: #767676;
-  padding: 6px 4px;
-  border-radius: 14px;
-  transition: color 0.2s ease, background 0.2s ease;
+  pointer-events: auto;
+  transition: background 0.16s ease, border-color 0.16s ease, transform 0.12s ease;
 }
 
-.lx-dock-icon {
-  font-size: 18px;
-  line-height: 1;
-}
-
-.lx-dock-label {
-  font-size: 11px;
-  font-weight: 600;
+.lx-dock-item:active {
+  transform: scale(0.94);
 }
 
 .lx-dock-item.is-active {
-  color: #812d48;
-  background: #f9f8f6;
+  background: var(--color-line);
+  border-color: var(--color-line-strong);
+  color: var(--color-ink);
+}
+
+/* small dot marks the active tab, as in the mockup */
+.lx-dock-item.is-active::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-ink);
 }

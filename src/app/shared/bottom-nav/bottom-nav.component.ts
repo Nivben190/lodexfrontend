@@ -1,23 +1,24 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { IconComponent, IconName } from '../icon/icon.component';
 
 interface NavTab {
   path: string;
   label: string;
-  icon: string;
+  icon: IconName;
 }
 
 @Component({
   selector: 'app-bottom-nav',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, IconComponent],
   templateUrl: './bottom-nav.component.html',
   styleUrl: './bottom-nav.component.scss'
 })
 export class BottomNavComponent {
   tabs: NavTab[] = [
-    { path: '/feed', label: 'השראות', icon: '✨' },
-    { path: '/closet', label: 'הארון שלי', icon: '👗' },
-    { path: '/suitcase', label: 'מזוודה', icon: '🧳' }
+    { path: '/suitcase', label: 'מזוודה', icon: 'luggage' },
+    { path: '/feed', label: 'השראות', icon: 'search' },
+    { path: '/closet', label: 'הארון שלי', icon: 'shirt' }
   ];
 }

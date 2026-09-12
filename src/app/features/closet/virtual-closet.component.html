@@ -1,69 +1,145 @@
 <section class="lx-closet">
   <div class="lx-closet-head">
-    <h2 class="hebrew-serif">הארון שלי</h2>
-    <button class="lx-add-btn" (click)="showAddModal.set(true)">
-      <span>+</span> הוסף פריט
-    </button>
-  </div>
-
-  <div class="lx-filter-row lx-scroll-x">
-    @for (cat of categories; track cat) {
-      <button
-        class="lx-chip"
-        [class.is-active]="closetService.activeCategory() === cat"
-        (click)="setCategory(cat)"
-      >{{ cat }}</button>
-    }
-  </div>
-
-  <div class="lx-color-filter lx-scroll-x">
-    @for (color of colors; track color.name) {
-      <button
-        class="lx-swatch"
-        [class.is-active]="closetService.activeColor() === color.name"
-        [style.background]="color.hex"
-        [title]="color.name"
-        (click)="toggleColor(color.name)"
-      ></button>
-    }
-  </div>
-
-  <div class="lx-sort-row">
+    <h2 class="lx-title">הארון שלי</h2>
     <span class="lx-count">{{ sortedItems().length }} פריטים</span>
-    <div class="lx-sort-toggle">
-      <button [class.is-active]="sortMode() === 'newest'" (click)="setSort('newest')">חדש</button>
-      <button [class.is-active]="sortMode() === 'name'" (click)="setSort('name')">שם</button>
+  </div>
+
+  <div class="lx-filter-row">
+    <button
+      class="lx-filter-trigger"
+      type="button"
+      [class.is-active]="hasRefinements()"
+      (click)="showFilters.set(true)"
+      aria-label="סינון ומיון"
+    >
+      <lx-icon name="sliders" [size]="18"></lx-icon>
+    </button>
+
+    <div class="lx-categories lx-scroll-x">
+      @for (cat of categories; track cat) {
+        <button
+          class="lx-quiet-tab"
+          [class.is-active]="closetService.activeCategory() === cat"
+          (click)="setCategory(cat)"
+        >{{ cat }}</button>
+      }
     </div>
   </div>
 
-  @if (sortedItems().length > 0) {
+  @if (activeColorHex(); as hex) {
+    <div class="lx-active-filter">
+      <button class="lx-filter-pill" type="button" (click)="toggleColor(closetService.activeColor()!)">
+        <span class="lx-pill-dot" [style.background]="hex"></span>
+        {{ closetService.activeColor() }}
+        <lx-icon name="x" [size]="13"></lx-icon>
+      </button>
+    </div>
+  }
+
+  @if (loading() && closetService.items().length === 0) {
+    <div class="lx-grid" aria-hidden="true">
+      @for (n of [1, 2, 3, 4, 5, 6]; track n) {
+        <div class="lx-item-card">
+          <div class="lx-item-image-wrap lx-skeleton"></div>
+          <span class="lx-skeleton lx-line-skeleton"></span>
+        </div>
+      }
+    </div>
+  } @else if (sortedItems().length > 0) {
     <div class="lx-grid">
       @for (item of sortedItems(); track item.id) {
-        <div class="lx-item-card">
+        <article class="lx-item-card">
           <div class="lx-item-image-wrap">
             <img [src]="item.imageUrl" [alt]="item.name" loading="lazy" />
             @if (item.isFavorite) {
-              <span class="lx-fav">♥</span>
+              <span class="lx-fav" aria-label="מועדף">
+                <lx-icon name="heart-filled" [size]="13"></lx-icon>
+              </span>
             }
           </div>
           <div class="lx-item-info">
             <span class="lx-item-name">{{ item.name }}</span>
             <span class="lx-item-brand">{{ item.brand }}</span>
-            <div class="lx-item-tags">
-              <span class="lx-tag">{{ item.season }}</span>
-              <span class="lx-tag">{{ item.formality }}</span>
-            </div>
           </div>
-        </div>
+        </article>
       }
+    </div>
+  } @else if (closetService.loadFailed()) {
+    <div class="lx-empty">
+      <span class="lx-empty-mark">
+        <lx-icon name="shirt" [size]="22"></lx-icon>
+      </span>
+      <h4>לא הצלחנו לטעון את הארון</h4>
+      <p>ייתכן שהשרת מתעורר משינה. נסי שוב בעוד רגע.</p>
+      <button class="lx-empty-action" type="button" (click)="retry()">נסי שוב</button>
     </div>
   } @else {
     <div class="lx-empty">
-      <span class="lx-empty-icon">👗</span>
-      <p>לא נמצאו פריטים בסינון הנוכחי</p>
+      <span class="lx-empty-mark">
+        <lx-icon name="shirt" [size]="22"></lx-icon>
+      </span>
+      <h4>לא נמצאו פריטים</h4>
+      <p>אין פריטים שמתאימים לסינון הנוכחי.</p>
+      <button class="lx-empty-action" type="button" (click)="resetFilters()">נקי סינון</button>
     </div>
   }
+
+  <button class="lx-add-btn" type="button" (click)="showAddModal.set(true)">
+    <lx-icon name="camera" [size]="18"></lx-icon>
+    <span>הוסיפי פריט</span>
+  </button>
 </section>
+
+@if (showFilters()) {
+  <div class="lx-sheet-backdrop" (click)="onFilterBackdrop($event)">
+    <div class="lx-sheet" role="dialog" aria-label="סינון ומיון">
+      <span class="lx-sheet-handle"></span>
+      <button class="lx-sheet-close" type="button" (click)="showFilters.set(false)" aria-label="סגירה">
+        <lx-icon name="x" [size]="17"></lx-icon>
+      </button>
+
+      <h3 class="lx-sheet-title">סינון ומיון</h3>
+
+      <span class="lx-field-label">צבע</span>
+      <div class="lx-color-row">
+        @for (color of colors; track color.name) {
+          <button
+            class="lx-swatch"
+            type="button"
+            [class.is-active]="closetService.activeColor() === color.name"
+            [style.background]="color.hex"
+            [title]="color.name"
+            [attr.aria-label]="color.name"
+            (click)="toggleColor(color.name)"
+          ></button>
+        }
+      </div>
+
+      <span class="lx-field-label">מיון</span>
+      <div class="lx-sort-row">
+        <button
+          class="lx-sort-btn"
+          type="button"
+          [class.is-active]="sortMode() === 'newest'"
+          (click)="setSort('newest')"
+        >הנוסף לאחרונה</button>
+        <button
+          class="lx-sort-btn"
+          type="button"
+          [class.is-active]="sortMode() === 'name'"
+          (click)="setSort('name')"
+        >לפי שם</button>
+      </div>
+
+      <div class="lx-sheet-actions">
+        <button class="lx-ghost-btn" type="button" (click)="resetFilters()">איפוס</button>
+        <button class="lx-primary-btn" type="button" (click)="showFilters.set(false)">
+          הצגת {{ sortedItems().length }} פריטים
+        </button>
+      </div>
+    </div>
+  </div>
+}
 
 @if (showAddModal()) {
   <app-add-item-modal (closed)="showAddModal.set(false)" (added)="onItemAdded()"></app-add-item-modal>

@@ -1,12 +1,12 @@
-<nav class="lx-dock">
+<nav class="lx-dock" aria-label="ניווט ראשי">
   @for (tab of tabs; track tab.path) {
     <a
       class="lx-dock-item"
       [routerLink]="tab.path"
       routerLinkActive="is-active"
+      [attr.aria-label]="tab.label"
     >
-      <span class="lx-dock-icon">{{ tab.icon }}</span>
-      <span class="lx-dock-label">{{ tab.label }}</span>
+      <lx-icon [name]="tab.icon" [size]="21"></lx-icon>
     </a>
   }
 </nav>

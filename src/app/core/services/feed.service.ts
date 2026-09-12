@@ -17,6 +17,9 @@ export class FeedService {
 
   posts = signal<FeedPost[]>([]);
   loading = signal(false);
+  /** Set when the last load errored, so the UI can offer a retry
+      instead of claiming there are no results. */
+  loadFailed = signal(false);
 
   searchQuery = signal('');
   viewMode = signal<FeedViewMode>('all');
@@ -44,10 +47,14 @@ export class FeedService {
 
   loadFeed() {
     this.loading.set(true);
+    this.loadFailed.set(false);
     return this.http.get<FeedPost[]>(this.baseUrl).pipe(
       tap({
         next: (posts) => this.posts.set(posts),
-        error: () => this.loading.set(false),
+        error: () => {
+          this.loadFailed.set(true);
+          this.loading.set(false);
+        },
         complete: () => this.loading.set(false)
       })
     );

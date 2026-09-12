@@ -1,16 +1,40 @@
+/* ============================================================
+   LOOXDEX — design tokens
+   Visual language mirrors the looxdex mockup:
+   white ground, cherry accent, hairline borders, lucide icons.
+   ============================================================ */
+
 :root {
-  --color-cream: #fdfbf7;
-  --color-ivory: #f9f8f6;
   --color-white: #ffffff;
+  --color-black: #000000;
+  --color-ink: #111111;
   --color-cherry: #812d48;
   --color-cherry-dark: #631f37;
-  --color-cherry-light: #a14562;
-  --color-border: #efebe4;
-  --color-charcoal: #1a1a1a;
+  --color-cherry-soft: #f7eef1;
+  --color-line: #e8e8e8;
+  --color-line-strong: #d2d2d2;
+  --color-soft: #f5f5f5;
+  --color-sunk: #f1f1f1;
   --color-muted: #767676;
+  --color-selected: #8f8f8f;
+  --color-gold: #f4c84b;
+  --color-danger: #a12424;
 
-  --font-serif: "Bodoni Moda", "Playfair Display", serif;
+  --radius-sm: 10px;
+  --radius-md: 13px;
+  --radius-lg: 16px;
+  --radius-sheet: 28px;
+  --radius-pill: 999px;
+
+  --shadow-dock: 0 6px 18px rgba(0, 0, 0, 0.1);
+  --shadow-float: 0 7px 18px rgba(0, 0, 0, 0.16);
+  --shadow-sheet: 0 -10px 40px rgba(0, 0, 0, 0.12);
+
+  --font-display: "Urbanist", "Assistant", sans-serif;
   --font-body: "Assistant", "Heebo", sans-serif;
+
+  /* dock height + safe area, so scroll containers can clear the dock */
+  --dock-clearance: 104px;
 }
 
 * {
@@ -22,12 +46,13 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background: #e9e4da;
+  background: var(--color-soft);
 }
 
 body {
   font-family: var(--font-body);
-  color: var(--color-charcoal);
+  font-weight: 400;
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
@@ -38,13 +63,17 @@ body {
 }
 
 .app-frame {
+  /* `width` is required as well as `max-width`: body is a flex container on
+     wide screens, and without it the frame shrinks to its content width. */
+  width: 100%;
   max-width: 430px;
+  flex: 0 0 auto;
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
-  background: var(--color-cream);
+  background: var(--color-white);
   position: relative;
   overflow-x: hidden;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.02);
 }
 
 @media (min-width: 431px) {
@@ -55,16 +84,207 @@ body {
   }
 
   .app-frame {
-    min-height: 100vh;
-    box-shadow: 0 30px 80px -20px rgba(26, 26, 26, 0.35);
+    box-shadow: 0 24px 70px -24px rgba(0, 0, 0, 0.28);
   }
 }
 
 button {
+  font: inherit;
   font-family: inherit;
   cursor: pointer;
 }
 
-.hebrew-serif {
-  font-family: var(--font-serif);
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* ---- shared primitives ------------------------------------ */
+
+.lx-title {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+
+/* Underline-style tabs / filter chips, as in the mockup */
+.lx-quiet-tab {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--color-muted);
+  padding: 8px 2px;
+  font-size: 14px;
+  transition: color 0.16s ease, border-color 0.16s ease;
+}
+
+.lx-quiet-tab.is-active {
+  border-bottom-color: var(--color-selected);
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.lx-scroll-x {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+
+.lx-scroll-x::-webkit-scrollbar {
+  display: none;
+}
+
+/* Primary cherry action */
+.lx-primary-btn {
+  background: var(--color-cherry);
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-weight: 600;
+  padding: 12px 16px;
+  width: 100%;
+  transition: background 0.16s ease, transform 0.12s ease;
+}
+
+.lx-primary-btn:hover:not(:disabled) {
+  background: var(--color-cherry-dark);
+}
+
+.lx-primary-btn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+.lx-primary-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Skeleton shimmer — shown while the API cold-starts */
+.lx-skeleton {
+  background: var(--color-sunk);
+  background-image: linear-gradient(
+    90deg,
+    var(--color-sunk) 0%,
+    #e6e6e6 50%,
+    var(--color-sunk) 100%
+  );
+  background-size: 200% 100%;
+  animation: lx-shimmer 1.35s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes lx-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Black pill toast */
+.lx-toast {
+  position: fixed;
+  bottom: calc(var(--dock-clearance) + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-black);
+  color: var(--color-white);
+  border-radius: 18px;
+  padding: 10px 16px;
+  font-size: 13px;
+  white-space: nowrap;
+  z-index: 80;
+  animation: lx-toast-in 0.22s ease;
+}
+
+@keyframes lx-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Bottom sheet scaffold */
+.lx-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.32);
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: lx-fade-in 0.18s ease;
+}
+
+.lx-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--color-white);
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  box-shadow: var(--shadow-sheet);
+  padding: 12px 18px calc(24px + env(safe-area-inset-bottom));
+  animation: lx-sheet-up 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lx-sheet-handle {
+  width: 44px;
+  height: 4px;
+  border-radius: 4px;
+  background: #cfcfcf;
+  margin: 0 auto 14px;
+}
+
+.lx-sheet-close {
+  position: absolute;
+  top: 18px;
+  /* opposite the reading direction, so it never collides with the title */
+  inset-inline-end: 16px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--color-line);
+  background: var(--color-white);
+  color: var(--color-ink);
+  z-index: 2;
+}
+
+@keyframes lx-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lx-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

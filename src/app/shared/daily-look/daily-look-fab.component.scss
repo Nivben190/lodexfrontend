@@ -1,0 +1,131 @@
+/* A fixed rail the same width as the app frame, so the button lands on the
+   frame's edge at any viewport width rather than floating outside it. */
+.lx-daily-rail {
+  position: fixed;
+  bottom: calc(var(--dock-clearance) + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  padding: 0 18px;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+  z-index: 45;
+}
+
+.lx-daily-fab {
+  position: relative;
+  pointer-events: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-gold);
+  color: var(--color-white);
+  box-shadow: var(--shadow-float);
+  transition: transform 0.14s ease;
+}
+
+.lx-daily-fab:active {
+  transform: scale(0.93);
+}
+
+.lx-daily-badge {
+  position: absolute;
+  top: -3px;
+  inset-inline-end: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-white);
+  border-radius: 50%;
+  background: var(--color-cherry);
+  color: var(--color-white);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* ---- sheet ------------------------------------------------ */
+
+.lx-daily-sheet {
+  text-align: right;
+}
+
+.lx-daily-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-cherry);
+  background: var(--color-cherry-soft);
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 10px;
+}
+
+.lx-daily-headline {
+  margin: 0 0 8px;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+
+.lx-daily-reason {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+.lx-daily-weather {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--color-muted);
+  background: var(--color-soft);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  margin-bottom: 16px;
+}
+
+.lx-daily-collage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.lx-daily-piece {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  text-align: center;
+}
+
+.lx-daily-piece img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  background: var(--color-sunk);
+  border-radius: 12px;
+  display: block;
+}
+
+.lx-daily-piece figcaption {
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--color-muted);
+}

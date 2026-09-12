@@ -1,12 +1,14 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { SuitcaseService } from '../../core/services/suitcase.service';
-import { PackingItem } from '../../core/models/suitcase.model';
+import { OutfitEventGroup, PackingItem } from '../../core/models/suitcase.model';
 import { FeedService } from '../../core/services/feed.service';
 import { FeedPost } from '../../core/models/feed.model';
+import { IconComponent } from '../../shared/icon/icon.component';
 
 @Component({
   selector: 'app-suitcase-packer',
   standalone: true,
+  imports: [IconComponent],
   templateUrl: './suitcase-packer.component.html',
   styleUrl: './suitcase-packer.component.scss'
 })
@@ -14,10 +16,16 @@ export class SuitcasePackerComponent implements OnInit {
   suitcaseService = inject(SuitcaseService);
   feedService = inject(FeedService);
 
+  loading = this.suitcaseService.loading;
   pickerOpenForGroup = signal<string | null>(null);
   toastMessage = signal<string | null>(null);
 
   ngOnInit() {
+    this.suitcaseService.loadSuitcases().subscribe();
+    this.feedService.loadFeed().subscribe();
+  }
+
+  retry() {
     this.suitcaseService.loadSuitcases().subscribe();
     this.feedService.loadFeed().subscribe();
   }
@@ -48,6 +56,10 @@ export class SuitcasePackerComponent implements OnInit {
 
   countOwnedItems(post: FeedPost): number {
     return post.detectedItems.filter((d) => d.ownedInCloset).length;
+  }
+
+  packedInGroup(group: OutfitEventGroup): number {
+    return group.items.filter((i) => i.isPacked).length;
   }
 
   openPicker(eventKey: string) {

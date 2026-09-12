@@ -8,6 +8,7 @@ import {
   CLOSET_SEASONS,
   CreateClosetItemRequest
 } from '../../core/models/closet.model';
+import { IconComponent } from '../../shared/icon/icon.component';
 
 const PLACEHOLDER_PREVIEWS = [
   'https://images.unsplash.com/photo-1445205170230-053b83016050?w=400&q=80',
@@ -18,7 +19,7 @@ const PLACEHOLDER_PREVIEWS = [
 @Component({
   selector: 'app-add-item-modal',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, IconComponent],
   templateUrl: './add-item-modal.component.html',
   styleUrl: './add-item-modal.component.scss'
 })

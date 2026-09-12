@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, computed, inject, signa
 import { ClosetService } from '../../core/services/closet.service';
 import { FeedService } from '../../core/services/feed.service';
 import { DetectedItem, FeedPost } from '../../core/models/feed.model';
+import { IconComponent } from '../../shared/icon/icon.component';
 
 type ActionView = 'similar' | 'alternatives' | null;
 
@@ -10,6 +11,7 @@ const SCAN_DURATION_MS = 900;
 @Component({
   selector: 'app-bounding-box-modal',
   standalone: true,
+  imports: [IconComponent],
   templateUrl: './bounding-box-modal.component.html',
   styleUrl: './bounding-box-modal.component.scss'
 })

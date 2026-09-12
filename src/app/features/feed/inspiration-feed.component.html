@@ -1,88 +1,106 @@
 <section class="lx-feed">
-  @if (dailyLook(); as look) {
-    <div class="lx-daily">
-      <span class="lx-daily-badge">✨ הלוק היומי</span>
-      <h2 class="hebrew-serif">{{ look.headline }}</h2>
-      <p class="lx-daily-reason">{{ look.reasoning }}</p>
-
-      <div class="lx-daily-items">
-        @for (item of look.items; track item.id) {
-          <div class="lx-daily-item">
-            <img [src]="item.imageUrl" [alt]="item.name" />
-            <span>{{ item.name }}</span>
-          </div>
-        }
-      </div>
-    </div>
-  }
-
-  <div class="lx-section-title">
-    <h3 class="hebrew-serif">גלריית השראות</h3>
-    <span class="lx-section-sub">לחצי על תמונה לזיהוי פריטים</span>
+  <div class="lx-feed-head">
+    <h2 class="lx-title">גלריית השראות</h2>
+    <span class="lx-feed-sub">לחצי על תמונה לזיהוי פריטים</span>
   </div>
 
-  <div class="lx-search-row">
-    <span class="lx-search-icon">🔍</span>
+  <div class="lx-search">
+    <lx-icon name="search" [size]="17"></lx-icon>
     <input
       class="lx-search-input"
       type="search"
-      placeholder="חפשי השראה... בעברית או באנגלית"
+      placeholder="חפשי לוק, יעד או פריט"
       [value]="feedService.searchQuery()"
       (input)="onSearchInput($event)"
     />
+    @if (feedService.searchQuery()) {
+      <button class="lx-search-clear" type="button" (click)="clearSearch()" aria-label="ניקוי חיפוש">
+        <lx-icon name="x" [size]="15"></lx-icon>
+      </button>
+    }
   </div>
 
-  <div class="lx-view-toggle">
+  <div class="lx-tabs">
     <button
-      class="lx-view-tab"
+      class="lx-quiet-tab"
       [class.is-active]="feedService.viewMode() === 'all'"
       (click)="setViewMode('all')"
     >הכל</button>
     <button
-      class="lx-view-tab"
+      class="lx-quiet-tab"
       [class.is-active]="feedService.viewMode() === 'saved'"
       (click)="setViewMode('saved')"
     >שמורים ({{ feedService.savedPosts().length }})</button>
   </div>
 
-  @if (feedService.visiblePosts().length > 0) {
+  @if (loading() && feedService.visiblePosts().length === 0) {
+    <div class="lx-masonry" aria-hidden="true">
+      @for (h of skeletonHeights; track $index) {
+        <div class="lx-tile lx-skeleton" [style.height.px]="h"></div>
+      }
+    </div>
+    <p class="lx-loading-note">טוענת השראות...</p>
+  } @else if (feedService.visiblePosts().length > 0) {
     <div class="lx-masonry">
       @for (post of feedService.visiblePosts(); track post.id) {
-        <div
-          class="lx-post-card"
-          role="button"
-          tabindex="0"
+        <button
+          class="lx-tile"
+          type="button"
           (click)="openPost(post)"
-          (keydown.enter)="openPost(post)"
+          [attr.aria-label]="'פתיחת ' + post.title"
           [style.aspect-ratio]="post.aspectRatioWidth + ' / ' + post.aspectRatioHeight"
         >
           <img [src]="post.imageUrl" [alt]="post.title" loading="lazy" />
-          <span class="lx-ai-chip">AI מזהה פריטים</span>
-          <button
-            class="lx-save-btn"
-            [class.is-saved]="post.isSaved"
-            (click)="toggleSave($event, post)"
-            [attr.aria-label]="post.isSaved ? 'הסירי משמורים' : 'שמרי לוק'"
-          >{{ post.isSaved ? '★' : '☆' }}</button>
-          <div class="lx-post-overlay">
-            <span class="lx-post-title">{{ post.title }}</span>
-            <span class="lx-post-likes">♥ {{ post.likes }}</span>
-          </div>
-        </div>
-      }
-    </div>
-  } @else if (!loading()) {
-    <div class="lx-empty-feed">
-      @if (feedService.viewMode() === 'saved') {
-        <p>עוד לא שמרת לוקים. לחצי על ה-☆ בתמונה כדי לשמור אותה כאן.</p>
-      } @else {
-        <p>לא נמצאו השראות עבור "{{ feedService.searchQuery() }}"</p>
-      }
-    </div>
-  }
 
-  @if (loading()) {
-    <p class="lx-loading">טוען השראות...</p>
+          <span
+            class="lx-heart"
+            [class.is-saved]="post.isSaved"
+            role="button"
+            tabindex="0"
+            (click)="toggleSave($event, post)"
+            (keydown.enter)="toggleSave($event, post)"
+            (keydown.space)="toggleSave($event, post)"
+            [attr.aria-label]="post.isSaved ? 'הסירי משמורים' : 'שמרי לוק'"
+          >
+            <lx-icon [name]="post.isSaved ? 'heart-filled' : 'heart'" [size]="15"></lx-icon>
+          </span>
+
+          @if (ownedCount(post) > 0) {
+            <span class="lx-owned" [attr.title]="ownedCount(post) + ' פריטים מהארון שלך'">
+              <lx-icon name="check" [size]="14"></lx-icon>
+            </span>
+          }
+        </button>
+      }
+    </div>
+  } @else if (feedService.loadFailed()) {
+    <div class="lx-empty">
+      <span class="lx-empty-mark">
+        <lx-icon name="scan-search" [size]="22"></lx-icon>
+      </span>
+      <h4>לא הצלחנו לטעון את ההשראות</h4>
+      <p>ייתכן שהשרת מתעורר משינה. נסי שוב בעוד רגע.</p>
+      <button class="lx-empty-action" type="button" (click)="retry()">נסי שוב</button>
+    </div>
+  } @else {
+    <div class="lx-empty">
+      <span class="lx-empty-mark">
+        <lx-icon [name]="feedService.viewMode() === 'saved' ? 'heart' : 'search'" [size]="22"></lx-icon>
+      </span>
+      @if (feedService.viewMode() === 'saved') {
+        <h4>עוד לא שמרת לוקים</h4>
+        <p>לחצי על הלב שעל התמונה כדי לשמור אותה לכאן.</p>
+        <button class="lx-empty-action" type="button" (click)="setViewMode('all')">
+          לגלריית ההשראות
+        </button>
+      } @else {
+        <h4>לא נמצאו תוצאות</h4>
+        <p>לא מצאנו השראות עבור "{{ feedService.searchQuery() }}".</p>
+        <button class="lx-empty-action" type="button" (click)="clearSearch()">
+          נקי את החיפוש
+        </button>
+      }
+    </div>
   }
 </section>
 

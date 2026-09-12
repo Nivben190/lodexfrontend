@@ -11,6 +11,8 @@ export class ClosetService {
 
   items = signal<ClosetItem[]>([]);
   loading = signal(false);
+  /** Set when the last load errored, so the UI can offer a retry. */
+  loadFailed = signal(false);
 
   activeCategory = signal<string>('הכל');
   activeColor = signal<string | null>(null);
@@ -27,10 +29,14 @@ export class ClosetService {
 
   loadCloset() {
     this.loading.set(true);
+    this.loadFailed.set(false);
     return this.http.get<ClosetItem[]>(this.baseUrl).pipe(
       tap({
         next: (items) => this.items.set(items),
-        error: () => this.loading.set(false),
+        error: () => {
+          this.loadFailed.set(true);
+          this.loading.set(false);
+        },
         complete: () => this.loading.set(false)
       })
     );

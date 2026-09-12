@@ -1,14 +1,15 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ClosetService } from '../../core/services/closet.service';
 import { CLOSET_CATEGORIES, CLOSET_COLORS } from '../../core/models/closet.model';
 import { AddItemModalComponent } from './add-item-modal.component';
+import { IconComponent } from '../../shared/icon/icon.component';
 
 type SortMode = 'newest' | 'name';
 
 @Component({
   selector: 'app-virtual-closet',
   standalone: true,
-  imports: [AddItemModalComponent],
+  imports: [AddItemModalComponent, IconComponent],
   templateUrl: './virtual-closet.component.html',
   styleUrl: './virtual-closet.component.scss'
 })
@@ -18,8 +19,21 @@ export class VirtualClosetComponent implements OnInit {
   categories = CLOSET_CATEGORIES;
   colors = CLOSET_COLORS;
 
+  loading = this.closetService.loading;
   sortMode = signal<SortMode>('newest');
   showAddModal = signal(false);
+  showFilters = signal(false);
+
+  /** True when anything beyond the default category view is applied. */
+  hasRefinements = computed(
+    () => this.closetService.activeColor() !== null || this.sortMode() !== 'newest'
+  );
+
+  activeColorHex = computed(() => {
+    const name = this.closetService.activeColor();
+    if (!name) return null;
+    return this.colors.find((c) => c.name === name)?.hex ?? null;
+  });
 
   ngOnInit() {
     this.closetService.loadCloset().subscribe();
@@ -36,6 +50,22 @@ export class VirtualClosetComponent implements OnInit {
 
   setSort(mode: SortMode) {
     this.sortMode.set(mode);
+  }
+
+  retry() {
+    this.closetService.loadCloset().subscribe();
+  }
+
+  resetFilters() {
+    this.closetService.activeCategory.set('הכל');
+    this.closetService.activeColor.set(null);
+    this.sortMode.set('newest');
+  }
+
+  onFilterBackdrop(event: MouseEvent) {
+    if ((event.target as HTMLElement).classList.contains('lx-sheet-backdrop')) {
+      this.showFilters.set(false);
+    }
   }
 
   sortedItems() {

@@ -1,12 +1,17 @@
 <header class="lx-header">
-  <span class="lx-wordmark hebrew-serif">LOOXDEX</span>
-
   @if (weather(); as look) {
     <span class="lx-weather">
       <span class="lx-weather-icon">{{ look.weather.icon }}</span>
-      <span>{{ look.weather.tempCelsius }}°C</span>
-      <span class="lx-weather-sep">|</span>
-      <span>{{ look.weather.city }}</span>
+      <span class="lx-weather-temp">{{ look.weather.tempCelsius }}°</span>
+      <span class="lx-weather-city">{{ look.weather.city }}</span>
     </span>
+  } @else {
+    <span class="lx-weather-placeholder"></span>
   }
+
+  <a class="lx-wordmark" routerLink="/feed" aria-label="looxdex — לדף הבית">looxdex</a>
+
+  <button class="lx-profile" type="button" aria-label="פרופיל">
+    <lx-icon name="user-round" [size]="20"></lx-icon>
+  </button>
 </header>

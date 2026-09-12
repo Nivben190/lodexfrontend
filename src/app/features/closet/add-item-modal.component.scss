@@ -1,71 +1,37 @@
-.lx-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(26, 26, 26, 0.55);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  z-index: 100;
+:host {
+  display: contents;
 }
 
 .lx-sheet {
-  width: 100%;
-  max-width: 430px;
-  max-height: 90vh;
-  overflow-y: auto;
-  background: #fdfbf7;
-  border-radius: 24px 24px 0 0;
-  padding: 10px 20px 28px;
+  text-align: right;
 }
 
-.lx-handle {
-  display: block;
-  width: 42px;
-  height: 4px;
-  background: #efebe4;
-  border-radius: 4px;
-  margin: 6px auto 14px;
+.lx-sheet-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-ink);
 }
 
-.lx-sheet-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
-}
-
-.lx-sheet-head h3 {
-  margin: 0;
-  font-size: 19px;
-  color: #1a1a1a;
-}
-
-.lx-close {
-  border: none;
-  background: #f9f8f6;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  font-size: 12px;
-  color: #767676;
-}
+/* ---- upload ------------------------------------------------- */
 
 .lx-upload {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border: 1.5px dashed #efebe4;
-  border-radius: 16px;
-  background: #f9f8f6;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  color: #767676;
-  font-size: 13px;
-  font-weight: 600;
+  gap: 8px;
+  width: 100%;
+  aspect-ratio: 16 / 10;
   margin-bottom: 18px;
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-soft);
+  color: var(--color-muted);
+  font-size: 13.5px;
   overflow: hidden;
+  padding: 0;
 }
 
 .lx-upload img {
@@ -74,58 +40,74 @@
   object-fit: cover;
 }
 
-.lx-upload-icon {
-  font-size: 26px;
+.lx-upload-swap {
+  position: absolute;
+  bottom: 10px;
+  inset-inline-end: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-ink);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
 }
 
+/* ---- fields -------------------------------------------------- */
+
 .lx-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: block;
   margin-bottom: 16px;
 }
 
-.lx-field > span {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #1a1a1a;
+.lx-field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-bottom: 8px;
 }
 
 .lx-field input {
-  border: 1px solid #efebe4;
-  background: #fff;
-  border-radius: 12px;
-  padding: 12px 14px;
+  width: 100%;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  color: var(--color-ink);
   font-size: 14px;
-  font-family: inherit;
-  color: #1a1a1a;
+  padding: 11px 12px;
+  outline: none;
+  transition: border-color 0.16s ease;
 }
 
 .lx-field input:focus {
-  outline: 2px solid #812d48;
-  outline-offset: 1px;
+  border-color: var(--color-selected);
+}
+
+.lx-field input::placeholder {
+  color: #a8a8a8;
 }
 
 .lx-chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 7px;
+  padding-bottom: 2px;
 }
 
 .lx-chip {
-  border: 1px solid #efebe4;
-  background: #fff;
-  color: #1a1a1a;
-  font-size: 12.5px;
-  font-weight: 600;
-  padding: 8px 14px;
-  border-radius: 999px;
+  flex: 0 0 auto;
+  border: 1px solid var(--color-line);
+  background: var(--color-white);
+  border-radius: var(--radius-pill);
+  color: var(--color-muted);
+  font-size: 13px;
+  padding: 8px 15px;
+  transition: border-color 0.16s ease, color 0.16s ease, background 0.16s ease;
 }
 
 .lx-chip.is-active {
-  background: #812d48;
-  border-color: #812d48;
-  color: #fff;
+  background: var(--color-cherry);
+  border-color: var(--color-cherry);
+  color: var(--color-white);
+  font-weight: 600;
 }
 
 .lx-color-row {
@@ -135,29 +117,17 @@
 }
 
 .lx-swatch {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: 1px solid #efebe4;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0;
 }
 
 .lx-swatch.is-active {
-  outline: 2px solid #812d48;
-  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--color-white), 0 0 0 4px var(--color-cherry);
 }
 
-.lx-submit {
-  width: 100%;
-  background: #812d48;
-  color: #fff;
-  border: none;
-  border-radius: 14px;
-  padding: 15px;
-  font-size: 15px;
-  font-weight: 700;
+.lx-primary-btn {
   margin-top: 6px;
-}
-
-.lx-submit:disabled {
-  opacity: 0.5;
 }

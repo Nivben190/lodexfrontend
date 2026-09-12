@@ -1,0 +1,45 @@
+@if (dailyLook(); as look) {
+  <div class="lx-daily-rail">
+    <button class="lx-daily-fab" type="button" (click)="open()" aria-label="הלוק שלך להיום">
+      <lx-icon name="sparkles" [size]="23"></lx-icon>
+      @if (!isSeen()) {
+        <span class="lx-daily-badge" aria-hidden="true">!</span>
+      }
+    </button>
+  </div>
+
+  @if (isOpen()) {
+    <div class="lx-sheet-backdrop" (click)="onBackdropClick($event)">
+      <div class="lx-sheet lx-daily-sheet" role="dialog" aria-label="הלוק שלך להיום">
+        <span class="lx-sheet-handle"></span>
+        <button class="lx-sheet-close" type="button" (click)="close()" aria-label="סגירה">
+          <lx-icon name="x" [size]="17"></lx-icon>
+        </button>
+
+        <span class="lx-daily-chip">
+          <lx-icon name="sparkles" [size]="12"></lx-icon>
+          הלוק היומי
+        </span>
+
+        <h3 class="lx-daily-headline">{{ look.headline }}</h3>
+        <p class="lx-daily-reason">{{ look.reasoning }}</p>
+
+        <div class="lx-daily-weather">
+          <span>{{ look.weather.icon }}</span>
+          <span>{{ look.weather.tempCelsius }}°C · {{ look.weather.condition }} · {{ look.weather.city }}</span>
+        </div>
+
+        <div class="lx-daily-collage">
+          @for (item of look.items; track item.id) {
+            <figure class="lx-daily-piece">
+              <img [src]="item.imageUrl" [alt]="item.name" />
+              <figcaption>{{ item.name }}</figcaption>
+            </figure>
+          }
+        </div>
+
+        <button class="lx-primary-btn" type="button" (click)="close()">אלבש היום</button>
+      </div>
+    </div>
+  }
+}
