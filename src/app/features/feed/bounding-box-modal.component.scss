@@ -14,20 +14,25 @@
 }
 
 .lx-modal {
+  position: relative;
   width: 100%;
   max-width: 430px;
   max-height: 92vh;
   overflow-y: auto;
   background: var(--color-white);
   border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
-  position: relative;
   animation: slideUp 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lx-sheet-body {
+  padding: 16px 16px calc(28px + env(safe-area-inset-bottom));
+  text-align: right;
 }
 
 .lx-modal-close,
 .lx-modal-save {
   position: absolute;
-  top: 14px;
+  top: 26px;
   z-index: 10;
   width: 34px;
   height: 34px;
@@ -38,15 +43,15 @@
   border: 0;
   background: rgba(255, 255, 255, 0.9);
   color: var(--color-ink);
-  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  transition: transform 0.15s ease, color 0.15s ease;
 }
 
 .lx-modal-close {
-  inset-inline-start: 14px;
+  inset-inline-start: 26px;
 }
 
 .lx-modal-save {
-  inset-inline-end: 14px;
+  inset-inline-end: 26px;
 }
 
 .lx-modal-save.is-saved {
@@ -58,41 +63,40 @@
   transform: scale(0.88);
 }
 
-.lx-modal-image-wrap {
+/* ---- hero ---------------------------------------------------- */
+
+.lx-hero-wrap {
   position: relative;
-  width: 100%;
-  aspect-ratio: 3 / 4;
+  border-radius: 18px;
   overflow: hidden;
-  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
   background: var(--color-soft);
 }
 
-.lx-modal-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.lx-hero {
   display: block;
+  width: 100%;
+  max-height: 330px;
+  object-fit: cover;
 }
 
-.lx-ai-badge {
+.lx-box-toggle {
   position: absolute;
-  bottom: 12px;
-  inset-inline-end: 12px;
-  display: inline-flex;
+  bottom: 10px;
+  inset-inline-end: 10px;
+  z-index: 6;
+  display: flex;
   align-items: center;
-  gap: 5px;
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--color-cherry);
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 6px 11px;
-  border-radius: var(--radius-pill);
-  transition: background 0.2s ease, color 0.2s ease;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-muted);
 }
 
-.lx-ai-badge.is-scanning {
-  background: rgba(0, 0, 0, 0.78);
-  color: var(--color-white);
+.lx-box-toggle.is-on {
+  color: var(--color-cherry);
 }
 
 .lx-scan-overlay {
@@ -121,76 +125,181 @@
 .lx-box {
   position: absolute;
   border: 2px solid var(--color-white);
-  outline: 1.5px solid var(--color-cherry);
+  outline: 1.5px solid rgba(129, 45, 72, 0.9);
   border-radius: 6px;
-  background: rgba(129, 45, 72, 0.08);
+  background: rgba(129, 45, 72, 0.06);
   padding: 0;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
   opacity: 0;
   animation: boxAppear 0.35s ease forwards;
+  transition: background 0.15s ease;
 }
 
-.lx-box.is-owned {
-  outline-color: #3b7a52;
-  background: rgba(59, 122, 82, 0.1);
-}
-
-.lx-box.is-owned .lx-box-tag {
-  background: #3b7a52;
+.lx-box.is-selected,
+.lx-box:hover {
+  background: rgba(129, 45, 72, 0.2);
 }
 
 @keyframes boxAppear {
-  from { opacity: 0; transform: scale(0.85); }
+  from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }
 
-.lx-box:hover,
-.lx-box:active {
-  background: rgba(129, 45, 72, 0.22);
-  transform: scale(1.02);
-}
-
-/* Inside the box rather than below it: a box near the image edge would
-   otherwise have its label clipped off. */
 .lx-box-tag {
   position: absolute;
   top: 4px;
   inset-inline-end: 4px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
   background: var(--color-black);
   color: var(--color-white);
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 2px 6px;
+  border-radius: 5px;
   white-space: nowrap;
   pointer-events: none;
 }
 
-.lx-modal-caption {
-  padding: 16px 18px 28px;
-  text-align: right;
-}
+/* ---- title + summary ----------------------------------------- */
 
-.lx-modal-caption h3 {
-  margin: 0 0 4px;
-  font-size: 19px;
+.lx-look-title {
+  margin: 11px 2px 2px;
+  font-size: 16px;
   font-weight: 600;
+  line-height: 1.4;
   color: var(--color-ink);
 }
 
-.lx-modal-caption p {
-  margin: 0;
+.lx-look-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 3px 2px 14px;
   font-size: 13px;
+  color: #707070;
+}
+
+.lx-credit {
+  margin: 12px 2px 0;
+  font-size: 12px;
   color: var(--color-muted);
 }
 
+/* ---- detected product rail ------------------------------------ */
+
+.lx-products {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.lx-products::-webkit-scrollbar {
+  display: none;
+}
+
+.lx-product {
+  position: relative;
+  flex: 0 0 118px;
+  width: 118px;
+  height: 142px;
+  padding: 9px;
+  border-radius: 14px;
+  background: #eeeeee;
+  overflow: hidden;
+}
+
+.lx-product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.lx-product-visual {
+  position: relative;
+  flex: 1;
+  min-height: 62px;
+  background: #e4e4e3;
+  overflow: hidden;
+}
+
+/* The detection box, cropped out of the source photo entirely in CSS. */
+.lx-sprite {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+}
+
+/* Hidden to match the mockup; the data is there if we want to surface it. */
+.lx-confidence {
+  display: none;
+  position: absolute;
+  top: 6px;
+  inset-inline-end: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  font-size: 9px;
+  padding: 3px 6px;
+}
+
+.lx-product-info {
+  display: flex;
+  flex-direction: column;
+  min-height: 56px;
+  padding: 7px 8px;
+  background: #f3f2f0;
+}
+
+.lx-product-name {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-ink);
+}
+
+.lx-item-actions {
+  display: flex;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.lx-item-actions button {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 25px;
+  padding: 2px 7px;
+  border: 1px solid rgba(90, 84, 80, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.58);
+  color: #494542;
+  font-size: 10px;
+}
+
+.lx-item-actions button.is-active {
+  background: #e8efea;
+  border-color: #a9b9ad;
+  color: #365941;
+}
+
+.lx-item-actions button:disabled {
+  cursor: default;
+}
+
+/* ---- selected item panel --------------------------------------- */
+
 .lx-item-panel {
-  padding: 16px 18px 32px;
-  text-align: right;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-line);
 }
 
 .lx-back-link {
@@ -202,68 +311,20 @@
   color: var(--color-muted);
   font-size: 13px;
   font-weight: 600;
-  padding: 0 0 14px;
-}
-
-.lx-assistant-line {
-  margin: 0 0 10px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-cherry);
-  background: var(--color-cherry-soft);
-  padding: 8px 12px;
-  border-radius: 12px;
-  display: inline-block;
-  animation: fadeIn 0.25s ease;
-}
-
-.lx-owned-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  background: #eef6f0;
-  color: #3b7a52;
-  font-weight: 700;
-  font-size: 13.5px;
-  padding: 13px 16px;
-  border-radius: 14px;
+  padding: 0 0 10px;
 }
 
 .lx-item-panel h4 {
   margin: 0 0 4px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--color-ink);
 }
 
 .lx-item-sub {
-  margin: 0 0 18px;
-  font-size: 13px;
+  margin: 0 0 14px;
+  font-size: 12.5px;
   color: var(--color-muted);
-}
-
-.lx-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.lx-action {
-  border: 1px solid var(--color-line);
-  background: var(--color-white);
-  color: var(--color-ink);
-  font-size: 14.5px;
-  font-weight: 600;
-  padding: 13px 16px;
-  border-radius: 14px;
-  text-align: center;
-}
-
-.lx-action-primary {
-  background: var(--color-cherry);
-  border-color: var(--color-cherry);
-  color: var(--color-white);
 }
 
 .lx-mini-grid {
@@ -276,10 +337,10 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background: var(--color-white);
+  padding: 8px;
   border: 1px solid var(--color-line);
   border-radius: 14px;
-  padding: 8px;
+  background: var(--color-white);
   font-size: 12px;
   color: var(--color-ink);
   text-decoration: none;
@@ -294,9 +355,9 @@
 }
 
 .lx-alt-brand {
+  font-size: 11px;
   font-weight: 700;
   color: var(--color-cherry);
-  font-size: 11px;
 }
 
 .lx-alt-price {
@@ -304,13 +365,21 @@
 }
 
 .lx-empty-note {
-  color: var(--color-muted);
+  margin: 0;
   font-size: 13px;
+  color: var(--color-muted);
 }
 
-.lx-toast {
-  position: absolute;
-  bottom: 20px;
+.lx-match-btn {
+  margin-top: 16px;
+  border-radius: 14px;
+}
+
+/* ---- toast ------------------------------------------------------ */
+
+.lx-modal-toast {
+  position: fixed;
+  bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--color-black);
@@ -320,6 +389,7 @@
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
+  z-index: 120;
   animation: fadeIn 0.2s ease;
 }
 

@@ -1,12 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output, computed, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { ClosetService } from '../../core/services/closet.service';
 import { FeedService } from '../../core/services/feed.service';
 import { DetectedItem, FeedPost } from '../../core/models/feed.model';
 import { IconComponent } from '../../shared/icon/icon.component';
 
-type ActionView = 'similar' | 'alternatives' | null;
-
 const SCAN_DURATION_MS = 900;
+
+/** Rough hex per closet colour name, used when adding a detected item. */
+const DEFAULT_COLOR = { name: 'אחר', hex: '#9A958D' };
 
 @Component({
   selector: 'app-bounding-box-modal',
@@ -24,57 +25,104 @@ export class BoundingBoxModalComponent implements OnInit {
 
   scanning = signal(true);
   savedState = signal(false);
+  showBoxes = signal(true);
   selectedItem = signal<DetectedItem | null>(null);
-  actionView = signal<ActionView>(null);
   toastMessage = signal<string | null>(null);
-  private markedHaveIds = signal<Set<number>>(new Set());
+  addingId = signal<number | null>(null);
+
+  private addedIds = signal<Set<number>>(new Set());
 
   ngOnInit() {
     this.savedState.set(this.post.isSaved);
-    setTimeout(() => this.scanning.set(false), SCAN_DURATION_MS);
+
+    // Only play the scan flourish the first time an image is opened; a post
+    // that was analysed long ago should not pretend to be working.
+    if (this.post.detectedItems.length > 0) {
+      setTimeout(() => this.scanning.set(false), SCAN_DURATION_MS);
+    } else {
+      this.scanning.set(false);
+    }
   }
 
-  aiStatusLabel = computed(() =>
-    this.scanning() ? 'ה-AI סורקת את התמונה...' : this.assistantIntro()
-  );
+  confidencePercent(item: DetectedItem): number {
+    return Math.round((item.score ?? 0) * 100);
+  }
 
-  assistantIntro = computed(() => {
-    const count = this.post.detectedItems.length;
-    return count === 1 ? '✨ זיהיתי פריט אחד בתמונה' : `✨ זיהיתי ${count} פריטים בתמונה`;
-  });
+  /**
+   * Zoom factor that makes the detection box fill the tile.
+   * A box 25% wide needs the image scaled to 400% for that slice to fill it.
+   */
+  spriteSize(item: DetectedItem): string {
+    const w = this.clampSpan(item.box.width);
+    const h = this.clampSpan(item.box.height);
+    return `${(100 / w) * 100}% ${(100 / h) * 100}%`;
+  }
 
-  assistantForItem = computed(() => {
-    const item = this.selectedItem();
-    if (!item) return '';
-    if (this.isOwned(item)) return '🎉 יש לך את זה בארון!';
-    if (item.similarClosetItemIds.length > 0) return '👀 מצאתי לך פריט דומה בארון שלך';
-    return '🤔 לא מצאנו את זה בארון שלך עדיין';
-  });
+  /**
+   * CSS background-position is a percentage *of the leftover space*, not of the
+   * image, so the box offset has to be rescaled by the remaining room.
+   */
+  spritePosition(item: DetectedItem): string {
+    const w = this.clampSpan(item.box.width);
+    const h = this.clampSpan(item.box.height);
 
-  similarItems = computed(() => {
-    const item = this.selectedItem();
-    if (!item) return [];
-    return this.closetService.findByIds(item.similarClosetItemIds);
-  });
+    const x = Math.min(Math.max(item.box.x, 0), 100 - w);
+    const y = Math.min(Math.max(item.box.y, 0), 100 - h);
 
-  matchingItem = computed(() => {
-    const item = this.selectedItem();
-    if (!item?.matchingClosetItemId) return undefined;
-    return this.closetService.findById(item.matchingClosetItemId);
-  });
+    const px = 100 - w === 0 ? 0 : (x / (100 - w)) * 100;
+    const py = 100 - h === 0 ? 0 : (y / (100 - h)) * 100;
 
-  isOwned(item: DetectedItem): boolean {
-    return item.ownedInCloset || this.markedHaveIds().has(item.id);
+    return `${px}% ${py}%`;
+  }
+
+  /** Guards against a zero or full-width box producing a divide-by-zero. */
+  private clampSpan(value: number): number {
+    return Math.min(Math.max(value, 1), 99);
+  }
+
+  isInCloset(item: DetectedItem): boolean {
+    return item.ownedInCloset || this.addedIds().has(item.id);
+  }
+
+  addToCloset(item: DetectedItem) {
+    if (this.isInCloset(item) || this.addingId() !== null) return;
+
+    this.addingId.set(item.id);
+
+    this.closetService
+      .addItem({
+        name: item.labelHe,
+        imageUrl: this.post.imageUrl,
+        category: item.category,
+        color: DEFAULT_COLOR.name,
+        colorHex: DEFAULT_COLOR.hex,
+        season: 'כל השנה',
+        brand: '',
+        formality: 'יומיומי'
+      })
+      .subscribe({
+        next: () => {
+          this.addedIds.update((ids) => new Set(ids).add(item.id));
+          this.addingId.set(null);
+          this.showToast(`"${item.labelHe}" נוסף לארון ✓`);
+        },
+        error: () => {
+          this.addingId.set(null);
+          this.showToast('לא הצלחנו להוסיף את הפריט');
+        }
+      });
+  }
+
+  matchFromCloset() {
+    this.showToast('התאמה מהארון תהיה זמינה בקרוב');
   }
 
   selectItem(item: DetectedItem) {
     this.selectedItem.set(item);
-    this.actionView.set(null);
   }
 
   backToBoxes() {
     this.selectedItem.set(null);
-    this.actionView.set(null);
   }
 
   close() {
@@ -87,27 +135,12 @@ export class BoundingBoxModalComponent implements OnInit {
     }
   }
 
-  markAsHave() {
-    const item = this.selectedItem();
-    if (!item) return;
-    this.markedHaveIds.update((ids) => new Set(ids).add(item.id));
-    this.showToast('נוסף לארון שלך ✓');
-  }
-
-  showSimilar() {
-    this.actionView.set('similar');
-  }
-
-  showAlternatives() {
-    this.actionView.set('alternatives');
-  }
-
   toggleSavePost(event: Event) {
     event.stopPropagation();
     const nowSaved = !this.savedState();
     this.savedState.set(nowSaved);
     this.feedService.toggleSave(this.post.id).subscribe();
-    this.showToast(nowSaved ? 'הלוק נשמר ★' : 'הלוק הוסר מהשמורים');
+    this.showToast(nowSaved ? 'הלוק נשמר' : 'הלוק הוסר מהשמורים');
   }
 
   private showToast(message: string) {

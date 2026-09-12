@@ -12,105 +12,119 @@
       <lx-icon [name]="savedState() ? 'heart-filled' : 'heart'" [size]="17"></lx-icon>
     </button>
 
-    <div class="lx-modal-image-wrap">
-      <img [src]="post.imageUrl" [alt]="post.title" class="lx-modal-image" />
+    <div class="lx-sheet-body">
+      <div class="lx-hero-wrap">
+        <img [src]="post.imageUrl" [alt]="post.title" class="lx-hero" />
 
-      @if (scanning()) {
-        <div class="lx-scan-overlay">
-          <div class="lx-scan-line"></div>
-        </div>
-      }
+        @if (scanning()) {
+          <div class="lx-scan-overlay">
+            <div class="lx-scan-line"></div>
+          </div>
+        }
 
-      @if (!selectedItem()) {
-        @if (!scanning()) {
+        @if (!scanning() && showBoxes()) {
           @for (item of post.detectedItems; track item.id; let i = $index) {
             <button
               class="lx-box"
-              [class.is-owned]="isOwned(item)"
+              [class.is-selected]="selectedItem()?.id === item.id"
               [style.left.%]="item.box.x"
               [style.top.%]="item.box.y"
               [style.width.%]="item.box.width"
               [style.height.%]="item.box.height"
               [style.animation-delay.ms]="i * 90"
               (click)="selectItem(item)"
+              [attr.aria-label]="item.labelHe"
             >
-              <span class="lx-box-tag">
-                {{ item.labelHe }}
-                @if (isOwned(item)) {
-                  <lx-icon name="check" [size]="11"></lx-icon>
-                }
-              </span>
+              <span class="lx-box-tag">{{ item.labelHe }}</span>
             </button>
           }
         }
-        <span class="lx-ai-badge" [class.is-scanning]="scanning()">
-          <lx-icon name="scan-search" [size]="13"></lx-icon>
-          {{ aiStatusLabel() }}
-        </span>
-      }
-    </div>
 
-    @if (!selectedItem()) {
-      <div class="lx-modal-caption">
-        <h3 class="hebrew-serif">{{ post.title }}</h3>
-        <p>{{ post.photographer }} · {{ post.location }}</p>
+        @if (post.detectedItems.length > 0) {
+          <button
+            class="lx-box-toggle"
+            type="button"
+            [class.is-on]="showBoxes()"
+            (click)="showBoxes.set(!showBoxes())"
+            [attr.aria-label]="showBoxes() ? 'הסתרת סימונים' : 'הצגת סימונים'"
+          >
+            <lx-icon name="scan-search" [size]="15"></lx-icon>
+          </button>
+        }
       </div>
-    }
 
-    @if (selectedItem(); as item) {
-      <div class="lx-item-panel">
-        <button class="lx-back-link" (click)="backToBoxes()">
-          <lx-icon name="arrow-right" [size]="15"></lx-icon>
-          חזרה לתמונה
-        </button>
+      <p class="lx-look-title">{{ post.title }}</p>
 
-        @if (actionView() === null) {
-          <p class="lx-assistant-line">{{ assistantForItem() }}</p>
-          <h4 class="hebrew-serif">{{ item.labelHe }}</h4>
-          <p class="lx-item-sub">{{ item.category }}</p>
+      <p class="lx-look-summary">
+        <lx-icon name="sparkles" [size]="13"></lx-icon>
+        @if (scanning()) {
+          <span>ה-AI סורקת את התמונה...</span>
+        } @else if (post.detectedItems.length > 0) {
+          <span>זוהו {{ post.detectedItems.length }} פריטים בלוק</span>
+        } @else {
+          <span>לא זוהו פריטים בתמונה הזו</span>
+        }
+      </p>
 
-          @if (isOwned(item)) {
-            <div class="lx-owned-banner">
-              <lx-icon name="check" [size]="16"></lx-icon>
-              הפריט הזה כבר בארון שלך
-            </div>
-          } @else {
-            <div class="lx-actions">
-              <button class="lx-action lx-action-primary" (click)="markAsHave()">יש לי כזה</button>
-              <button class="lx-action" (click)="showSimilar()">דומה למה שיש לי</button>
-              <button class="lx-action" (click)="showAlternatives()">חיפוש חלופה</button>
+      @if (!scanning() && post.detectedItems.length > 0) {
+        <div class="lx-products" aria-label="הפריטים שזוהו בלוק">
+          @for (item of post.detectedItems; track item.id) {
+            <div class="lx-product">
+              <div class="lx-product-card">
+                <div class="lx-product-visual">
+                  <!-- The crop is done in CSS from the detection box, so no
+                       server-side image processing is needed. -->
+                  <div
+                    class="lx-sprite"
+                    [style.background-image]="'url(' + post.imageUrl + ')'"
+                    [style.background-size]="spriteSize(item)"
+                    [style.background-position]="spritePosition(item)"
+                  ></div>
+                  <span class="lx-confidence">{{ confidencePercent(item) }}%</span>
+                </div>
+
+                <div class="lx-product-info">
+                  <span class="lx-product-name" [title]="item.labelHe">{{ item.labelHe }}</span>
+
+                  <div class="lx-item-actions">
+                    <button
+                      type="button"
+                      [class.is-active]="isInCloset(item)"
+                      [disabled]="isInCloset(item) || addingId() === item.id"
+                      (click)="addToCloset(item)"
+                    >
+                      <lx-icon [name]="isInCloset(item) ? 'check' : 'plus'" [size]="12"></lx-icon>
+                      לארון
+                    </button>
+
+                    <button type="button" (click)="selectItem(item)">
+                      <lx-icon name="search" [size]="12"></lx-icon>
+                      פרטים
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           }
-        }
+        </div>
+      }
 
-        @if (actionView() === 'similar') {
-          <h4 class="hebrew-serif">פריטים דומים בארון שלך</h4>
-          @if (similarItems().length > 0 || matchingItem()) {
-            <div class="lx-mini-grid">
-              @if (matchingItem(); as match) {
-                <div class="lx-mini-card">
-                  <img [src]="match.imageUrl" [alt]="match.name" />
-                  <span>{{ match.name }}</span>
-                </div>
-              }
-              @for (similar of similarItems(); track similar.id) {
-                <div class="lx-mini-card">
-                  <img [src]="similar.imageUrl" [alt]="similar.name" />
-                  <span>{{ similar.name }}</span>
-                </div>
-              }
-            </div>
-          } @else {
-            <p class="lx-empty-note">לא נמצאו פריטים דומים בארון כרגע.</p>
-          }
-        }
+      <p class="lx-credit">{{ post.photographer }}@if (post.location) { · {{ post.location }} }</p>
 
-        @if (actionView() === 'alternatives') {
-          <h4 class="hebrew-serif">חלופות לרכישה</h4>
+      @if (selectedItem(); as item) {
+        <div class="lx-item-panel">
+          <button class="lx-back-link" (click)="backToBoxes()">
+            <lx-icon name="arrow-right" [size]="15"></lx-icon>
+            סגירת הפריט
+          </button>
+
+          <h4>{{ item.labelHe }}</h4>
+          <p class="lx-item-sub">{{ item.category }} · ודאות {{ confidencePercent(item) }}%</p>
+
           @if (item.alternatives.length > 0) {
             <div class="lx-mini-grid">
               @for (alt of item.alternatives; track alt.id) {
-                <a class="lx-mini-card lx-mini-card-shop" [href]="alt.storeUrl">
+                <a class="lx-mini-card" [href]="alt.storeUrl" target="_blank" rel="noopener">
                   <img [src]="alt.imageUrl" [alt]="alt.name" />
                   <span class="lx-alt-brand">{{ alt.brand }}</span>
                   <span>{{ alt.name }}</span>
@@ -119,14 +133,18 @@
               }
             </div>
           } @else {
-            <p class="lx-empty-note">אין כרגע חלופות זמינות לפריט זה.</p>
+            <p class="lx-empty-note">עוד לא מצאנו חלופות לפריט הזה.</p>
           }
-        }
-      </div>
-    }
+        </div>
+      }
+
+      <button class="lx-primary-btn lx-match-btn" type="button" (click)="matchFromCloset()">
+        התאימי לי מהארון
+      </button>
+    </div>
 
     @if (toastMessage(); as msg) {
-      <div class="lx-toast">{{ msg }}</div>
+      <div class="lx-modal-toast">{{ msg }}</div>
     }
   </div>
 </div>
