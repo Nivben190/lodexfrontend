@@ -135,19 +135,39 @@
   transform: scale(0.86);
 }
 
-.lx-owned {
+/* Count of items the detector found in this image. */
+.lx-detected {
   position: absolute;
   top: 8px;
   inset-inline-end: 8px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 25px;
+  gap: 4px;
   height: 25px;
-  border-radius: 50%;
-  background: var(--color-white);
+  padding: 0 9px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.92);
   color: var(--color-ink);
+  font-size: 11px;
+  font-weight: 600;
   z-index: 2;
+}
+
+/* Zero-height marker the IntersectionObserver watches. */
+.lx-sentinel {
+  height: 1px;
+  width: 100%;
+}
+
+.lx-more-skeleton {
+  margin-top: 6px;
+}
+
+.lx-end-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--color-muted);
+  padding: 18px 0 4px;
 }
 
 /* ---- loading / empty --------------------------------------- */

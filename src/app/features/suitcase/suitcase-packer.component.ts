@@ -22,12 +22,12 @@ export class SuitcasePackerComponent implements OnInit {
 
   ngOnInit() {
     this.suitcaseService.loadSuitcases().subscribe();
-    this.feedService.loadFeed().subscribe();
+    this.feedService.loadSavedPosts().subscribe();
   }
 
   retry() {
     this.suitcaseService.loadSuitcases().subscribe();
-    this.feedService.loadFeed().subscribe();
+    this.feedService.loadSavedPosts().subscribe();
   }
 
   selectTrip(id: number) {

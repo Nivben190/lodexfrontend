@@ -1,7 +1,9 @@
 <section class="lx-feed">
   <div class="lx-feed-head">
     <h2 class="lx-title">גלריית השראות</h2>
-    <span class="lx-feed-sub">לחצי על תמונה לזיהוי פריטים</span>
+    @if (feedService.totalCount() > 0) {
+      <span class="lx-feed-sub">{{ feedService.totalCount() }} לוקים</span>
+    }
   </div>
 
   <div class="lx-search">
@@ -30,16 +32,15 @@
       class="lx-quiet-tab"
       [class.is-active]="feedService.viewMode() === 'saved'"
       (click)="setViewMode('saved')"
-    >שמורים ({{ feedService.savedPosts().length }})</button>
+    >שמורים</button>
   </div>
 
-  @if (loading() && feedService.visiblePosts().length === 0) {
+  @if (loading()) {
     <div class="lx-masonry" aria-hidden="true">
       @for (h of skeletonHeights; track $index) {
         <div class="lx-tile lx-skeleton" [style.height.px]="h"></div>
       }
     </div>
-    <p class="lx-loading-note">טוענת השראות...</p>
   } @else if (feedService.visiblePosts().length > 0) {
     <div class="lx-masonry">
       @for (post of feedService.visiblePosts(); track post.id) {
@@ -50,7 +51,7 @@
           [attr.aria-label]="'פתיחת ' + post.title"
           [style.aspect-ratio]="post.aspectRatioWidth + ' / ' + post.aspectRatioHeight"
         >
-          <img [src]="post.imageUrl" [alt]="post.title" loading="lazy" />
+          <img [src]="post.thumbnailUrl || post.imageUrl" [alt]="post.title" loading="lazy" />
 
           <span
             class="lx-heart"
@@ -65,14 +66,28 @@
             <lx-icon [name]="post.isSaved ? 'heart-filled' : 'heart'" [size]="15"></lx-icon>
           </span>
 
-          @if (ownedCount(post) > 0) {
-            <span class="lx-owned" [attr.title]="ownedCount(post) + ' פריטים מהארון שלך'">
-              <lx-icon name="check" [size]="14"></lx-icon>
+          @if (post.detectedItems.length > 0) {
+            <span class="lx-detected" [attr.title]="post.detectedItems.length + ' פריטים זוהו'">
+              <lx-icon name="scan-search" [size]="13"></lx-icon>
+              {{ post.detectedItems.length }}
             </span>
           }
         </button>
       }
     </div>
+
+    <!-- Pulled into view by the observer to fetch the next page. -->
+    <div #sentinel class="lx-sentinel" aria-hidden="true"></div>
+
+    @if (loadingMore()) {
+      <div class="lx-masonry lx-more-skeleton" aria-hidden="true">
+        @for (h of [180, 150]; track $index) {
+          <div class="lx-tile lx-skeleton" [style.height.px]="h"></div>
+        }
+      </div>
+    } @else if (!feedService.hasMore()) {
+      <p class="lx-end-note">הגעת לסוף הגלריה</p>
+    }
   } @else if (feedService.loadFailed()) {
     <div class="lx-empty">
       <span class="lx-empty-mark">

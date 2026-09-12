@@ -43,7 +43,9 @@
 
 html,
 body {
-  height: 100%;
+  /* min-height, not height: a fixed 100% caps the body and forces the frame to
+     scroll internally, which breaks viewport-rooted IntersectionObservers. */
+  min-height: 100%;
   margin: 0;
   padding: 0;
   background: var(--color-soft);
@@ -73,7 +75,11 @@ body {
   margin: 0 auto;
   background: var(--color-white);
   position: relative;
-  overflow-x: hidden;
+
+  /* `clip`, not `hidden`: hidden on one axis makes the other compute to `auto`,
+     turning this into a scroll container and detaching the page from the
+     document scroller. */
+  overflow-x: clip;
 }
 
 @media (min-width: 431px) {

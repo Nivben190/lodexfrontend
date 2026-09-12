@@ -19,6 +19,8 @@ export interface DetectedItem {
   label: string;
   labelHe: string;
   category: string;
+  /** Detector confidence, 0–1. */
+  score: number;
   box: BoundingBox;
   ownedInCloset: boolean;
   matchingClosetItemId: number | null;
@@ -29,12 +31,27 @@ export interface DetectedItem {
 export interface FeedPost {
   id: number;
   imageUrl: string;
+  /** Smaller variant for the grid; falls back to imageUrl. */
+  thumbnailUrl: string;
   title: string;
   photographer: string;
+  /** Attribution link, required by the image provider's terms. */
+  photographerUrl: string;
+  sourceUrl: string;
   location: string;
   likes: number;
   aspectRatioWidth: number;
   aspectRatioHeight: number;
   isSaved: boolean;
+  /** False while detection is still pending for this image. */
+  isAnalyzed: boolean;
   detectedItems: DetectedItem[];
+}
+
+/** One page of the feed, plus the cursor that fetches the next. */
+export interface FeedPage {
+  items: FeedPost[];
+  nextCursor: string | null;
+  hasMore: boolean;
+  totalCount: number;
 }

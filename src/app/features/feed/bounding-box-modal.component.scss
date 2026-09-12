@@ -151,10 +151,12 @@
   transform: scale(1.02);
 }
 
+/* Inside the box rather than below it: a box near the image edge would
+   otherwise have its label clipped off. */
 .lx-box-tag {
   position: absolute;
-  bottom: -22px;
-  inset-inline-end: 0;
+  top: 4px;
+  inset-inline-end: 4px;
   display: flex;
   align-items: center;
   gap: 4px;
