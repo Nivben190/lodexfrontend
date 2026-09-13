@@ -209,9 +209,12 @@
   width: 100%;
   aspect-ratio: 1;
   padding: 0;
-  border: 0;
+  /* White, like a shop's own page, so a cut-out and a shop photograph sit on the
+     same ground and the row reads as one set of products rather than a mixture
+     of sources. The hairline keeps a white tile from dissolving into the sheet. */
+  border: 1px solid rgba(90, 84, 80, 0.09);
   border-radius: 14px;
-  background: #efedea;
+  background: #fff;
   overflow: hidden;
   cursor: pointer;
 }
@@ -221,8 +224,11 @@
   height: 100%;
   /* contain, never cover: a cropped packshot stops being a packshot. */
   object-fit: contain;
-  padding: 9px;
+  padding: 11px;
   box-sizing: border-box;
+  /* A garment cut from a photograph has no shadow of its own, and without one it
+     looks pasted on rather than placed. */
+  filter: drop-shadow(0 3px 7px rgba(0, 0, 0, 0.10));
 }
 
 /* A shop's photograph arrives already staged on white. Sitting it on the app's
@@ -231,6 +237,7 @@
 .lx-cutout.is-product {
   padding: 0;
   background: #fff;
+  filter: none;   /* the shop's photograph brings its own lighting */
 }
 
 /* Fallback for items the segmenter could not isolate — a belt, a watch — where

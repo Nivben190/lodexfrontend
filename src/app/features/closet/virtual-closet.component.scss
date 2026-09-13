@@ -137,7 +137,8 @@
   aspect-ratio: 1;
   border-radius: 12px;
   overflow: hidden;
-  background: #efedea;
+  background: #fff;
+  border: 1px solid rgba(90, 84, 80, 0.09);
 }
 
 /* A photograph fills the tile; cropping it is the point. */
@@ -152,8 +153,9 @@
    what makes it stop looking like one. */
 .lx-item-image-wrap.is-cutout img {
   object-fit: contain;
-  padding: 9px;
+  padding: 11px;
   box-sizing: border-box;
+  filter: drop-shadow(0 3px 7px rgba(0, 0, 0, 0.10));
 }
 
 .lx-fav {
