@@ -7,9 +7,13 @@ export interface BoundingBox {
 
 export interface ShoppingAlternative {
   id: number;
+  /** The shop it is sold by. */
   brand: string;
   name: string;
   price: number;
+
+  /** Currency the price is in; empty when the shop published no price. */
+  currency: string;
   imageUrl: string;
   storeUrl: string;
 }

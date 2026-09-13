@@ -143,8 +143,12 @@
                 <a class="lx-mini-card" [href]="alt.storeUrl" target="_blank" rel="noopener">
                   <img [src]="alt.imageUrl" [alt]="alt.name" />
                   <span class="lx-alt-brand">{{ alt.brand }}</span>
-                  <span>{{ alt.name }}</span>
-                  <span class="lx-alt-price">₪{{ alt.price }}</span>
+                  <span class="lx-alt-name">{{ alt.name }}</span>
+                  @if (alt.price > 0) {
+                    <!-- The shop's own money: these are American shops, and a
+                         shekel sign in front of a dollar price is simply wrong. -->
+                    <span class="lx-alt-price">{{ alt.currency }}{{ alt.price }}</span>
+                  }
                 </a>
               }
             </div>
