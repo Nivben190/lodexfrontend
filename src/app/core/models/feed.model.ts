@@ -84,6 +84,9 @@ export interface FeedPost {
   isSaved: boolean;
   /** False while detection is still pending for this image. */
   isAnalyzed: boolean;
+
+  /** How many detected items were found for sale somewhere. */
+  shoppableItems: number;
   detectedItems: DetectedItem[];
 }
 

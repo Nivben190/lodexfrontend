@@ -60,6 +60,17 @@
             </span>
           }
 
+          @if (post.shoppableItems > 0) {
+            <!-- Which looks have something behind them to buy. -->
+            <span
+              class="lx-shoppable"
+              [attr.title]="post.shoppableItems + ' פריטים נמצאו בחנויות'"
+            >
+              <lx-icon name="shopping-bag" [size]="12"></lx-icon>
+              {{ post.shoppableItems }}
+            </span>
+          }
+
           @if (post.source === 'instagram') {
             <!-- Says where the look came from at a glance, before it is opened. -->
             <span class="lx-from-instagram" title="מתוך פוסט באינסטגרם">
