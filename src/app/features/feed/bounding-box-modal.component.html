@@ -76,7 +76,15 @@
                 (click)="selectItem(item)"
                 [attr.aria-label]="'פרטים על ' + item.displayName"
               >
-                @if (item.cutoutUrl) {
+                @if (item.productUrl) {
+                  <!-- The shop's own photograph of this kind of garment. Preferred
+                       over the cut-out: it is the garment lit, pressed and whole,
+                       which is what the cut-out can never be. -->
+                  <img class="lx-cutout is-product" [src]="item.productUrl" [alt]="item.displayName" />
+                  <span class="lx-similar" title="פריט דומה שנמצא בחנות">
+                    <lx-icon name="shopping-bag" [size]="11"></lx-icon>
+                  </span>
+                } @else if (item.cutoutUrl) {
                   <!-- The garment on its own, cut out when the look was analysed. -->
                   <!-- Not lazy: inside a modal's horizontal rail the loading
                        trigger never fires, and a tile is only a few KB anyway. -->

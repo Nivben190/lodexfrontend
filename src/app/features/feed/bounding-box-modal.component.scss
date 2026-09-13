@@ -225,6 +225,14 @@
   box-sizing: border-box;
 }
 
+/* A shop's photograph arrives already staged on white. Sitting it on the app's
+   warm grey puts a white rectangle inside a beige square; the tile takes the
+   photograph's own background instead, and the result reads as a shop card. */
+.lx-cutout.is-product {
+  padding: 0;
+  background: #fff;
+}
+
 /* Fallback for items the segmenter could not isolate — a belt, a watch — where
    the detection box is cropped out of the source photo in CSS instead. */
 .lx-sprite {
